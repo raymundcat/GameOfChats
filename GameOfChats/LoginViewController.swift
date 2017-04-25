@@ -24,6 +24,7 @@ class LoginViewController: UIViewController {
         button.setTitle("REGISTER", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         return button
     }()
     
@@ -42,7 +43,7 @@ class LoginViewController: UIViewController {
         loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loginButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 12).isActive = true
         loginButton.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
-        loginButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        loginButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
         
     }
     
