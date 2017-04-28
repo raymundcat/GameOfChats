@@ -7,6 +7,8 @@ target 'GameOfChats' do
 
   # Pods for GameOfChats
   pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
   
   target 'GameOfChatsTests' do
     inherit! :search_paths
