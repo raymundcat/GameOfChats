@@ -64,6 +64,15 @@ class LoginViewController: UIViewController {
         return textField
     }()
     
+    let profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = #imageLiteral(resourceName: "winter-logo")
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .heroBlue
@@ -73,6 +82,16 @@ class LoginViewController: UIViewController {
         
         view.addSubview(loginButton)
         setUpRegisterButton()
+        
+        view.addSubview(profileImageView)
+        setupLogoImageView()
+    }
+    
+    func setupLogoImageView(){
+        profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        profileImageView.bottomAnchor.constraint(equalTo: inputsContainerView.topAnchor, constant: -12).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
     
     func setUpRegisterButton(){
@@ -80,7 +99,6 @@ class LoginViewController: UIViewController {
         loginButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 12).isActive = true
         loginButton.widthAnchor.constraint(equalTo: inputsContainerView.widthAnchor).isActive = true
         loginButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
-        
     }
     
     func setUpInputsContainer(){
