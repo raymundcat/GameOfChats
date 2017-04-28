@@ -18,7 +18,7 @@ class LoginViewController: UIViewController {
         return inputsContainerView
     }()
     
-    let loginButton: UIButton = {
+    lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor(r: 80, g: 101, b: 161)
         button.setTitle("REGISTER", for: .normal)
@@ -26,8 +26,13 @@ class LoginViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         return button
     }()
+    
+    func handleRegister(){
+        print("register")
+    }
     
     let nameTextField: UITextField = {
         let textField = UITextField()
@@ -70,6 +75,10 @@ class LoginViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = #imageLiteral(resourceName: "winter-logo")
         imageView.backgroundColor = .clear
+        imageView.layer.shadowRadius = 2
+        imageView.layer.shadowOpacity = 0.3
+        imageView.layer.shadowOffset = .zero
+        imageView.layer.shadowColor = UIColor.black.cgColor
         return imageView
     }()
     
