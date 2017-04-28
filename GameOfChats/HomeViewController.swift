@@ -16,6 +16,11 @@ class HomeViewController: UITableViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(logout))
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        logout()
+    }
+    
     func logout(){
         present(LoginViewController(), animated: true, completion: nil)
     }
