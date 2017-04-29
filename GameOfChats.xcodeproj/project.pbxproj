@@ -20,6 +20,9 @@
 		EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC30E9EC1EAD37A4005E2E81 /* UIColor+Extensions.swift */; };
 		EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC30E9F01EAD38E4005E2E81 /* HomeViewController.swift */; };
 		EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC741C701EB3645900B5D0B1 /* Constants.swift */; };
+		EC741C741EB4ACA100B5D0B1 /* LoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC741C731EB4ACA100B5D0B1 /* LoginCoordinator.swift */; };
+		EC741C771EB4B6FD00B5D0B1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC741C761EB4B6FD00B5D0B1 /* User.swift */; };
+		EC741C7B1EB4B79100B5D0B1 /* NewMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC741C7A1EB4B79100B5D0B1 /* NewMessageViewController.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +69,9 @@
 		EC30E9EC1EAD37A4005E2E81 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		EC30E9F01EAD38E4005E2E81 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		EC741C701EB3645900B5D0B1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC741C731EB4ACA100B5D0B1 /* LoginCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginCoordinator.swift; sourceTree = "<group>"; };
+		EC741C761EB4B6FD00B5D0B1 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		EC741C7A1EB4B79100B5D0B1 /* NewMessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageViewController.swift; sourceTree = "<group>"; };
 		ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +151,7 @@
 		EC30E9B51EAD3253005E2E81 /* GameOfChats */ = {
 			isa = PBXGroup;
 			children = (
+				EC741C781EB4B77200B5D0B1 /* New Message */,
 				EC30E9EE1EAD38D0005E2E81 /* Home */,
 				EC30E9E61EAD3705005E2E81 /* Login */,
 				EC30E9EA1EAD3787005E2E81 /* Overalls */,
@@ -196,6 +203,7 @@
 		EC30E9E61EAD3705005E2E81 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				EC741C721EB4AC8C00B5D0B1 /* Models */,
 				EC30E9E71EAD370A005E2E81 /* Views */,
 			);
 			name = Login;
@@ -212,6 +220,7 @@
 		EC30E9EA1EAD3787005E2E81 /* Overalls */ = {
 			isa = PBXGroup;
 			children = (
+				EC741C751EB4B6F100B5D0B1 /* Entities */,
 				EC30E9EB1EAD3793005E2E81 /* Extensions */,
 			);
 			name = Overalls;
@@ -237,6 +246,38 @@
 			isa = PBXGroup;
 			children = (
 				EC30E9F01EAD38E4005E2E81 /* HomeViewController.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		EC741C721EB4AC8C00B5D0B1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EC741C731EB4ACA100B5D0B1 /* LoginCoordinator.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		EC741C751EB4B6F100B5D0B1 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				EC741C761EB4B6FD00B5D0B1 /* User.swift */,
+			);
+			name = Entities;
+			sourceTree = "<group>";
+		};
+		EC741C781EB4B77200B5D0B1 /* New Message */ = {
+			isa = PBXGroup;
+			children = (
+				EC741C791EB4B77A00B5D0B1 /* Views */,
+			);
+			name = "New Message";
+			sourceTree = "<group>";
+		};
+		EC741C791EB4B77A00B5D0B1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EC741C7A1EB4B79100B5D0B1 /* NewMessageViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -526,11 +567,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC741C741EB4ACA100B5D0B1 /* LoginCoordinator.swift in Sources */,
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,
 				EC30E9E91EAD372E005E2E81 /* LoginViewController.swift in Sources */,
 				EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */,
 				EC30E9B71EAD3253005E2E81 /* AppDelegate.swift in Sources */,
+				EC741C771EB4B6FD00B5D0B1 /* User.swift in Sources */,
+				EC741C7B1EB4B79100B5D0B1 /* NewMessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

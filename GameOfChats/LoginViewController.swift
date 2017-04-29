@@ -17,6 +17,7 @@ class LoginViewController: UIViewController {
         inputsContainerView.backgroundColor = .white
         inputsContainerView.translatesAutoresizingMaskIntoConstraints = false
         inputsContainerView.layer.cornerRadius = 5
+        inputsContainerView.layer.masksToBounds = true
         return inputsContainerView
     }()
     
@@ -28,12 +29,32 @@ class LoginViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleLoginOrRegister), for: .touchUpInside)
         return button
     }()
     
-    func handleRegister(){
+    func handleLoginOrRegister(){
+        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
+            handleLogin()
+        }else{
+            handleRegister()
+        }
+    }
+    
+    func handleLogin(){
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        
+        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil {
+                print("auth error occured: \(String(describing: error?.localizedDescription))")
+                return
+            }
+            self.dismiss(animated: true, completion: nil)
+        })
+    }
+    
+    func handleRegister(){
+        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { return }
         
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
@@ -45,7 +66,7 @@ class LoginViewController: UIViewController {
             
             let ref = FIRDatabase.database().reference(fromURL: firURL)
             let userRef = ref.child("users").child(uid)
-            let values = ["email" : email, "password" : password]
+            let values = ["email": email, "password": password, "name": name]
             
             userRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
                 if error != nil {
@@ -126,6 +147,7 @@ class LoginViewController: UIViewController {
         nameTextFieldHeightAnchor?.isActive = false
         nameTextFieldHeightAnchor = nameTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0 : 0.33)
         nameTextFieldHeightAnchor?.isActive = true
+        nameTextField.isHidden = loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? true : false
         
         emailTextFieldHeightAnchor?.isActive = false
         emailTextFieldHeightAnchor = emailTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0.5 : 0.33)
@@ -134,6 +156,10 @@ class LoginViewController: UIViewController {
         passwordTextFieldHeightAnchor?.isActive = false
         passwordTextFieldHeightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 0.5 : 0.33)
         passwordTextFieldHeightAnchor?.isActive = true
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -148,6 +174,8 @@ class LoginViewController: UIViewController {
         setUpRegisterButton()
         setupLogoImageView()
         setupRegisterSegmentedControl()
+        
+        segmentControlValueChanged()
     }
     
     func setupRegisterSegmentedControl(){
