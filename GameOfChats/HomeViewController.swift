@@ -16,8 +16,15 @@ class HomeViewController: UITableViewController {
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(handleLogout))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
         
         checkUserLoggedIn()
+    }
+    
+    func handleNewMessage(){
+        let newMessageVC = NewMessageViewController()
+        let newNavController = UINavigationController(rootViewController: newMessageVC)
+        present(newNavController, animated: true, completion: nil)
     }
     
     func checkUserLoggedIn(){
@@ -27,9 +34,7 @@ class HomeViewController: UITableViewController {
         }else{
             guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
             FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                
                 self.navigationItem.title = dict["name"] as? String ?? "No name found?"
             })
         }
