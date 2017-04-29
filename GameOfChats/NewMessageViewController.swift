@@ -13,10 +13,13 @@ class NewMessageViewController: UITableViewController{
     
     var users: [User] = [User]()
     
+    let cellID = "cellID"
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         fetchUsers()
+        
+        self.tableView.register(CustomCell.self, forCellReuseIdentifier: cellID)
     }
     
     func handleBack(){
@@ -41,9 +44,21 @@ class NewMessageViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "lol")
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         cell.textLabel?.text = users[indexPath.row].name
         cell.detailTextLabel?.text = users[indexPath.row].email
         return cell
     }
+}
+
+class CustomCell: UITableViewCell{
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
