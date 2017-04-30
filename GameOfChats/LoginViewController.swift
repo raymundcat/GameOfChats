@@ -66,19 +66,14 @@ class LoginViewController: UIViewController {
             }
             guard let uid = user?.uid else { return }
             
-            self.upload(forUID: uid, userProfileImage: chosenImage, completion: { (result) in
-                switch result{
-                case .Success(let url):
-                    let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
-                    self.updateUserProfile(forUID: uid, withProfile: userProfile, completion: { (error) in
-                        print("yay :D")
-                        self.dismiss(animated: true, completion: nil)
-                    })
-                    break
-                case .Failure(let error):
-                    break
-                }
-            })
+            self.upload(forUID: uid, userProfileImage: chosenImage).then{ url -> Promise<Void> in
+                let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
+                    return self.updateUserProfile(forUID: uid, withProfile: userProfile)
+            }.then{ _ -> Void in
+                self.dismiss(animated: true, completion: nil)
+            }.catch{ error in
+                
+            }
         })
     }
     
@@ -279,22 +274,19 @@ enum Result<ResultObject>{
     case Failure(Error)
 }
 
-enum ChangoSpellError: Error {
-    case hatMissingOrNotMagical
-    case noFamiliar
-    case familiarAlreadyAToad
-    case spellFailed(reason: String)
-    case spellNotKnownToWitch
+enum ImageUploadError: Error {
+    case failedToReadImage
+    case noImageReturned
 }
 
 //registration/login stuff
 extension LoginViewController{
     
-    func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{
+    func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{        
         return Promise{ fulfill, reject in
             let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).png")
             guard let imageData = UIImagePNGRepresentation(userProfileImage) else {
-                reject(ChangoSpellError.noFamiliar)
+                reject(ImageUploadError.failedToReadImage)
                 return
             }
             storageRef.put(imageData, metadata: nil, completion: { (metaData, error) in
@@ -304,47 +296,32 @@ extension LoginViewController{
                     if let url = metaData?.downloadURL()?.absoluteString{
                         fulfill(url)
                     }else{
-                        reject(ChangoSpellError.noFamiliar)
+                        reject(ImageUploadError.noImageReturned)
                     }
                 }
             })
         }
     }
     
-    func upload(forUID uid: String, userProfileImage: UIImage, completion: @escaping (_ result: Result<URLString>) -> Void){
-        //upload the image first
-        let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).png")
-        guard let imageData = UIImagePNGRepresentation(userProfileImage) else { return }
-        storageRef.put(imageData, metadata: nil, completion: { (metaData, error) in
-            if let error = error {
-                completion(.Failure(error))
-            }else{
-                if let url = metaData?.downloadURL()?.absoluteString{
-                    completion(.Success(url))
-                }else{
-                    
+    func updateUserProfile(forUID uid: String, withProfile profile: UserProfile) -> Promise<Void>{
+        return Promise { fulfill, reject in
+            let ref = FIRDatabase.database().reference(fromURL: firURL)
+            let userRef = ref.child("users").child(uid)
+            let values = ["email": profile.email,
+                          "password": profile.password,
+                          "name": profile.name,
+                          "profileImageURL": profile.profileImageURL]
+            
+            userRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
+                if let error = error{
+                    print("auth error occured: \(String(describing: error.localizedDescription))")
+                    reject(error)
+                    return
                 }
-            }
-        })
-    }
-    
-    func updateUserProfile(forUID uid: String, withProfile profile: UserProfile, completion: @escaping (_ error: Error?) -> Void) {
-        let ref = FIRDatabase.database().reference(fromURL: firURL)
-        let userRef = ref.child("users").child(uid)
-        let values = ["email": profile.email,
-                      "password": profile.password,
-                      "name": profile.name,
-                      "profileImageURL": profile.profileImageURL]
-        
-        userRef.updateChildValues(values, withCompletionBlock: { (error, ref) in
-            if error != nil {
-                print("auth error occured: \(String(describing: error?.localizedDescription))")
-                completion(error)
-                return
-            }
-            print("saved user successfully")
-            completion(nil)
-        })
+                print("saved user successfully")
+                fulfill()
+            })
+        }
     }
 }
 
