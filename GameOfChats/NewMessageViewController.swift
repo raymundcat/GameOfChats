@@ -31,7 +31,8 @@ class NewMessageViewController: UITableViewController{
             guard let dict = snapshot.value as? [String : AnyObject] else { return }
             guard let name = dict["name"] as? String else { return }
             guard let email = dict["email"] as? String else { return }
-            let user = User(name: name, email: email)
+            let imgURL = dict["profileImageURL"] as? String
+            let user = User(name: name, email: email, imgURL: imgURL)
             self.users.append(user)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -44,17 +45,54 @@ class NewMessageViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
-        cell.textLabel?.text = users[indexPath.row].name
-        cell.detailTextLabel?.text = users[indexPath.row].email
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? CustomCell else {
+            return UITableViewCell()
+        }
+        cell.user = users[indexPath.row]
         return cell
     }
 }
 
 class CustomCell: UITableViewCell{
     
+    var user: User?{
+        didSet{
+            guard let user = user else { return }
+            self.textLabel?.text = user.name
+            self.detailTextLabel?.text = user.email
+            if let url = user.imgURL{
+                self.imgURL = URL(string: url)
+            }
+        }
+    }
+    
+    private var imageDataTask: URLSessionDataTask?
+    var imgURL: URL?{
+        didSet{
+            guard let imgURL = imgURL else {
+                self.imageView?.image = #imageLiteral(resourceName: "winter-logo")
+                return
+            }
+            if let imageDataTask = imageDataTask {
+                imageDataTask.cancel()
+            }
+            imageDataTask = URLSession.shared.dataTask(with: imgURL, completionHandler: { (data, session, error) in
+                guard let data = data, let image = UIImage(data: data), error == nil else {
+                    self.imageView?.image = #imageLiteral(resourceName: "winter-logo")
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.imageView?.image = image
+                }
+            })
+            imageDataTask?.resume()
+        }
+    }
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        self.imageView?.image = #imageLiteral(resourceName: "winter-logo")
     }
     
     required init?(coder aDecoder: NSCoder) {
