@@ -12,18 +12,17 @@ let imageCache = NSCache<AnyObject, AnyObject>()
 
 extension UIImageView{
     func loadCachedImage(fromURL url: URL, withPlaceHolder placeHolder: UIImage?){
+        self.image = placeHolder
         
         if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage{
             self.image = imageFromCache
             return
         }
         
-        self.image = placeHolder
         URLSession.shared.dataTask(with: url, completionHandler: { (data, session, error) in
             guard let data = data, let image = UIImage(data: data), error == nil else {
                 return
             }
-            
             DispatchQueue.main.async {
                 self.image = image
                 imageCache.setObject(image, forKey: url as AnyObject)

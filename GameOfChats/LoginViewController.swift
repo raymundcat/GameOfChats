@@ -46,26 +46,21 @@ class LoginViewController: UIViewController {
     func handleLogin(){
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
         
-        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
-            if error != nil {
-                print("auth error occured: \(String(describing: error?.localizedDescription))")
-                return
-            }
+        loginUser(email: email, password: password).then{ uid -> Void in
             self.dismiss(animated: true, completion: nil)
-        })
+        }.catch{ error in
+            
+        }
     }
     
     func handleRegister(){
         guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
         
-        var userID: String?
-        
-        createUser(email: email, password: password).then{ uid -> Promise<URLString> in
-            userID = uid
-            return self.upload(forUID: uid, userProfileImage: chosenImage)
-        }.then{ url -> Promise<Void> in
+        createUser(email: email, password: password).then{ uid -> Promise<(URLString, String)> in
+            return self.upload(forUID: uid, userProfileImage: chosenImage).then{($0, uid)}
+        }.then{ (url, uid) -> Promise<Void> in
             let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
-            return self.updateUserProfile(forUID: userID!, withProfile: userProfile)
+            return self.updateUserProfile(forUID: uid, withProfile: userProfile)
         }.then{ _ -> Void in
             self.dismiss(animated: true, completion: nil)
         }.catch{ error in
@@ -282,6 +277,21 @@ enum AccountCreationError: Error{
 
 //registration/login stuff
 extension LoginViewController{
+    
+    func loginUser(email: String, password: String) -> Promise<UID>{
+        return Promise{ fulfill, reject in
+            FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+                if let error = error {
+                    reject(error)
+                }
+                if let uid = user?.uid{
+                    fulfill(uid)
+                }else{
+                    reject(AccountCreationError.userNotFound)
+                }
+            })
+        }
+    }
     
     func createUser(email: String, password: String) -> Promise<UID>{
         return Promise{ fulfill, reject in
