@@ -66,27 +66,13 @@ class CustomCell: UITableViewCell{
         }
     }
     
-    private var imageDataTask: URLSessionDataTask?
     var imgURL: URL?{
         didSet{
             guard let imgURL = imgURL else {
                 self.imageView?.image = #imageLiteral(resourceName: "winter-logo")
                 return
             }
-            if let imageDataTask = imageDataTask {
-                imageDataTask.cancel()
-            }
-            imageDataTask = URLSession.shared.dataTask(with: imgURL, completionHandler: { (data, session, error) in
-                guard let data = data, let image = UIImage(data: data), error == nil else {
-                    self.imageView?.image = #imageLiteral(resourceName: "winter-logo")
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    self.imageView?.image = image
-                }
-            })
-            imageDataTask?.resume()
+            self.imageView?.loadCachedImage(fromURL: imgURL, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
         }
     }
     
@@ -98,5 +84,4 @@ class CustomCell: UITableViewCell{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
