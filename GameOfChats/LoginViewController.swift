@@ -10,6 +10,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
+import PromiseKit
 
 class LoginViewController: UIViewController {
 
@@ -278,8 +279,37 @@ enum Result<ResultObject>{
     case Failure(Error)
 }
 
-//uploading stuff
+enum ChangoSpellError: Error {
+    case hatMissingOrNotMagical
+    case noFamiliar
+    case familiarAlreadyAToad
+    case spellFailed(reason: String)
+    case spellNotKnownToWitch
+}
+
+//registration/login stuff
 extension LoginViewController{
+    
+    func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{
+        return Promise{ fulfill, reject in
+            let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).png")
+            guard let imageData = UIImagePNGRepresentation(userProfileImage) else {
+                reject(ChangoSpellError.noFamiliar)
+                return
+            }
+            storageRef.put(imageData, metadata: nil, completion: { (metaData, error) in
+                if let error = error {
+                    reject(error)
+                }else{
+                    if let url = metaData?.downloadURL()?.absoluteString{
+                        fulfill(url)
+                    }else{
+                        reject(ChangoSpellError.noFamiliar)
+                    }
+                }
+            })
+        }
+    }
     
     func upload(forUID uid: String, userProfileImage: UIImage, completion: @escaping (_ result: Result<URLString>) -> Void){
         //upload the image first
