@@ -310,8 +310,8 @@ extension LoginViewController{
     
     func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{        
         return Promise{ fulfill, reject in
-            let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).png")
-            guard let imageData = UIImagePNGRepresentation(userProfileImage) else {
+            let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).jpg")
+            guard let imageData = UIImageJPEGRepresentation(userProfileImage, 0.1) else {
                 reject(ImageUploadError.failedToReadImage)
                 return
             }
