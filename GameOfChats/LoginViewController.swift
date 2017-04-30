@@ -58,23 +58,19 @@ class LoginViewController: UIViewController {
     func handleRegister(){
         guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
         
+        var userID: String?
         
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
-            if error != nil {
-                print("auth error occured: \(String(describing: error?.localizedDescription))")
-                return
-            }
-            guard let uid = user?.uid else { return }
+        createUser(email: email, password: password).then{ uid -> Promise<URLString> in
+            userID = uid
+            return self.upload(forUID: uid, userProfileImage: chosenImage)
+        }.then{ url -> Promise<Void> in
+            let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
+            return self.updateUserProfile(forUID: userID!, withProfile: userProfile)
+        }.then{ _ -> Void in
+            self.dismiss(animated: true, completion: nil)
+        }.catch{ error in
             
-            self.upload(forUID: uid, userProfileImage: chosenImage).then{ url -> Promise<Void> in
-                let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
-                    return self.updateUserProfile(forUID: uid, withProfile: userProfile)
-            }.then{ _ -> Void in
-                self.dismiss(animated: true, completion: nil)
-            }.catch{ error in
-                
-            }
-        })
+        }
     }
     
     let nameTextField: UITextField = {
@@ -268,6 +264,7 @@ struct UserProfile{
 }
 
 typealias URLString = String
+typealias UID = String
 
 enum Result<ResultObject>{
     case Success(ResultObject)
@@ -279,8 +276,27 @@ enum ImageUploadError: Error {
     case noImageReturned
 }
 
+enum AccountCreationError: Error{
+    case userNotFound
+}
+
 //registration/login stuff
 extension LoginViewController{
+    
+    func createUser(email: String, password: String) -> Promise<UID>{
+        return Promise{ fulfill, reject in
+            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
+                if let error = error {
+                    reject(error)
+                }
+                if let uid = user?.uid{
+                    fulfill(uid)
+                }else{
+                    reject(AccountCreationError.userNotFound)
+                }
+            })
+        }
+    }
     
     func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{        
         return Promise{ fulfill, reject in
