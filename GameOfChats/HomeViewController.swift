@@ -54,7 +54,7 @@ class HomeViewController: UITableViewController {
             guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
             FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let user = User.from(dict: dict) else { return }
+                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
                 self.titleView.user = user
             })
         }

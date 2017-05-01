@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class ChatLogViewController: UICollectionViewController{
     
@@ -75,11 +76,33 @@ class ChatLogViewController: UICollectionViewController{
     
     func handleSend(){
         guard let text = inputTextField.text else { return }
+        guard let currentUser = FIRAuth.auth()?.currentUser else { return }
         
         let ref = FIRDatabase.database().reference().child("messages")
         let newMessageRef = ref.childByAutoId()
-        let value = ["text" : text]
-        newMessageRef.setValue(value)
+        
+        let toID = user.id
+        let fromID = currentUser.uid
+        let timestamp = Int(NSDate().timeIntervalSince1970)
+        let message = ChatMessage(text: text,
+                                  toID: toID,
+                                  fromID: fromID,
+                                  timestamp: timestamp)
+        newMessageRef.setValue(message.getValue())
+    }
+}
+
+struct ChatMessage {
+    let text: String
+    let toID: String
+    let fromID: String
+    let timestamp: Int
+    
+    func getValue() -> [String : Any]{
+        return ["text" : text,
+                "toID": toID,
+                "fromID" : fromID,
+                "timestamp" : timestamp]
     }
 }
 
