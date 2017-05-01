@@ -8,18 +8,27 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class UserMessageCell: UITableViewCell{
     
     var message: ChatMessage?{
         didSet{
+            guard let currentUser = FIRAuth.auth()?.currentUser else { return }
             guard let message = message else { return }
             subTitleLabel.text = message.text
             titleLabel.text = "..."
             let time = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
             timeLabel.text = time.simpleTimeFormat()
             
-            FIRDatabase.database().reference().child("users").child(message.toID).observeSingleEvent(of: .value, with: { (snapshot) in
+            var userID = ""
+            if currentUser.uid == message.fromID {
+                userID = message.toID
+            }else if currentUser.uid == message.toID{
+                userID = message.fromID
+            }
+            
+            FIRDatabase.database().reference().child("users").child(userID).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
                 guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
                 self.user = user
