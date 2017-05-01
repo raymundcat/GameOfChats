@@ -56,7 +56,7 @@ class LoginViewController: UIViewController {
     func handleRegister(){
         guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
         
-        createUser(email: email, password: password).then{ uid -> Promise<(URLString, String)> in
+        createUser(email: email, password: password).then{ uid -> Promise<(String, String)> in
             return self.upload(forUID: uid, userProfileImage: chosenImage).then{($0, uid)}
         }.then{ (url, uid) -> Promise<Void> in
             let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
@@ -251,34 +251,10 @@ class LoginViewController: UIViewController {
     }
 }
 
-struct UserProfile{
-    let name: String
-    let email: String
-    let password: String
-    let profileImageURL: String
-}
-
-typealias URLString = String
-typealias UID = String
-
-enum Result<ResultObject>{
-    case Success(ResultObject)
-    case Failure(Error)
-}
-
-enum ImageUploadError: Error {
-    case failedToReadImage
-    case noImageReturned
-}
-
-enum AccountCreationError: Error{
-    case userNotFound
-}
-
 //registration/login stuff
 extension LoginViewController{
     
-    func loginUser(email: String, password: String) -> Promise<UID>{
+    func loginUser(email: String, password: String) -> Promise<String>{
         return Promise{ fulfill, reject in
             FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
                 if let error = error {
@@ -293,7 +269,7 @@ extension LoginViewController{
         }
     }
     
-    func createUser(email: String, password: String) -> Promise<UID>{
+    func createUser(email: String, password: String) -> Promise<String>{
         return Promise{ fulfill, reject in
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
                 if let error = error {
@@ -308,7 +284,7 @@ extension LoginViewController{
         }
     }
     
-    func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<URLString>{        
+    func upload(forUID uid: String, userProfileImage: UIImage) -> Promise<String>{
         return Promise{ fulfill, reject in
             let storageRef = FIRStorage.storage().reference().child("profileImageViews").child("\(uid).jpg")
             guard let imageData = UIImageJPEGRepresentation(userProfileImage, 0.1) else {

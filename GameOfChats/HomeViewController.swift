@@ -74,7 +74,14 @@ class HomeViewController: UITableViewController {
         present(LoginViewController(), animated: true, completion: nil)
     }
     
-    var messages = [ChatMessage]()
+    var messages: [ChatMessage]{
+        var messages = Array(messagesDict.values)
+        messages.sort(by: { (message1, message2) -> Bool in
+            return message1.timestamp > message2.timestamp
+        })
+        return messages
+    }
+    
     var messagesDict = [String : ChatMessage]()
     
     func observeMessages(){
@@ -83,10 +90,6 @@ class HomeViewController: UITableViewController {
             guard let dict = snapshot.value as? [String : AnyObject] else { return }
             guard let message = ChatMessage.from(dict: dict) else { return }
             self.messagesDict[message.toID] = message
-            self.messages = Array(self.messagesDict.values)
-            self.messages.sort(by: { (message1, message2) -> Bool in
-                return message1.timestamp > message2.timestamp
-            })
             
             self.tableView.reloadData()
         }, withCancel: nil)
@@ -116,69 +119,6 @@ extension HomeViewController: NewMessagesDelegate{
     }
 }
 
-class TitleView: UIView{
-    
-    lazy var containerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 20
-        imageView.layer.masksToBounds = true
-        return imageView
-    }()
-    
-    lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    func setupImageView(){
-        imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-    }
-    
-    func setupNameLabel(){
-        nameLabel.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 8).isActive = true
-        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        nameLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        nameLabel.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-    }
-    
-    func setupContainerView(){
-        containerView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        containerView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.addSubview(containerView)
-        containerView.addSubview(imageView)
-        containerView.addSubview(nameLabel)
-        setupContainerView()
-        setupImageView()
-        setupNameLabel()
-    }
-    
-    var user: User?{
-        didSet{
-            guard let user = user else { return }
-            if let stringUrl = user.imgURL, let url = URL(string: stringUrl) {
-                imageView.loadCachedImage(fromURL: url, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
-            }
-            nameLabel.text = user.name
-        }
-    }
-}
-
 extension Date{
     
     func simpleTimeFormat() -> String?{
@@ -189,109 +129,5 @@ extension Date{
         let formatter = DateFormatter()
         formatter.dateFormat = format
         return formatter.string(from: self)
-    }
-}
-
-class UserMessageCell: UITableViewCell{
-    
-    var message: ChatMessage?{
-        didSet{
-            guard let message = message else { return }
-            subTitleLabel.text = message.text
-            titleLabel.text = "..."
-            let time = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
-            timeLabel.text = time.simpleTimeFormat()
-            
-            FIRDatabase.database().reference().child("users").child(message.toID).observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
-                self.user = user
-            }, withCancel: nil)
-        }
-    }
-    
-    private (set) var user: User?{
-        didSet{
-            guard let user = user else { return }
-            self.titleLabel.text = user.name
-            if let url = user.imgURL{
-                self.imgURL = URL(string: url)
-            }
-        }
-    }
-    
-    var imgURL: URL?{
-        didSet{
-            guard let imgURL = imgURL else {
-                self.profileImageView.image = #imageLiteral(resourceName: "winter-logo")
-                return
-            }
-            self.profileImageView.loadCachedImage(fromURL: imgURL, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
-        }
-    }
-    
-    lazy var profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.masksToBounds = true
-        return imageView
-    }()
-    
-    lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17)
-        return label
-    }()
-    
-    lazy var subTitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 12)
-        return label
-    }()
-    
-    lazy var timeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .lightGray
-        return label
-    }()
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        addSubview(profileImageView)
-        addSubview(titleLabel)
-        addSubview(subTitleLabel)
-        addSubview(timeLabel)
-        setupImageView()
-        setupLabels()
-    }
-    
-    func setupLabels(){
-        titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
-        titleLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
-        titleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
-        
-        subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
-        subTitleLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
-        subTitleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
-        
-        timeLabel.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor).isActive = true
-        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
-    }
-    
-    func setupImageView(){
-        profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        profileImageView.layer.cornerRadius = 25
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
