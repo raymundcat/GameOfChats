@@ -12,6 +12,10 @@ import FirebaseDatabase
 import FirebaseStorage
 import PromiseKit
 
+protocol LoginViewContollerDelegate: class {
+    func loginViewControllerDidFinishLoginRegister()
+}
+
 class LoginViewController: UIViewController {
 
     let inputsContainerView: UIView = {
@@ -35,6 +39,8 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    weak var delegate: LoginViewContollerDelegate?
+    
     func handleLoginOrRegister(){
         if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
             handleLogin()
@@ -47,7 +53,7 @@ class LoginViewController: UIViewController {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
         
         loginUser(email: email, password: password).then{ uid -> Void in
-            self.dismiss(animated: true, completion: nil)
+            self.delegate?.loginViewControllerDidFinishLoginRegister()
         }.catch{ error in
             
         }
@@ -62,7 +68,7 @@ class LoginViewController: UIViewController {
             let userProfile = UserProfile(name: name, email: email, password: password, profileImageURL: url)
             return self.updateUserProfile(forUID: uid, withProfile: userProfile)
         }.then{ _ -> Void in
-            self.dismiss(animated: true, completion: nil)
+            self.delegate?.loginViewControllerDidFinishLoginRegister()
         }.catch{ error in
             
         }

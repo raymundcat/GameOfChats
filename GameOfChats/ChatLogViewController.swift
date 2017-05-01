@@ -89,8 +89,9 @@ class ChatLogViewController: UICollectionViewController{
         guard let text = inputTextField.text else { return }
         guard let currentUser = FIRAuth.auth()?.currentUser else { return }
         
-        let ref = FIRDatabase.database().reference().child("messages")
-        let newMessageRef = ref.childByAutoId()
+        let messagesRef = FIRDatabase.database().reference().child("messages")
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        let newMessageRef = messagesRef.childByAutoId()
         
         let toID = user.id
         let fromID = currentUser.uid
@@ -99,7 +100,12 @@ class ChatLogViewController: UICollectionViewController{
                                   toID: toID,
                                   fromID: fromID,
                                   timestamp: timestamp)
-        newMessageRef.setValue(message.getValue())
+        newMessageRef.setValue(message.getValue()) { (error, ref) in
+            guard error == nil else { return }
+            userMessagesRef.child(message.fromID).updateChildValues([ref.key : 1])
+            userMessagesRef.child(message.toID).updateChildValues([ref.key : 1])
+        }
+        
         inputTextField.text = nil
     }
 }

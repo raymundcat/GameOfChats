@@ -35,13 +35,12 @@ class HomeViewController: UITableViewController {
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
         navigationItem.titleView = titleView
         
-        checkUserLoggedIn()
-        observeMessages()
+        setUpNewUser()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    func setUpNewUser(){
         checkUserLoggedIn()
+        observeMessages()
     }
     
     func handleNewMessage(){
@@ -65,13 +64,19 @@ class HomeViewController: UITableViewController {
         }
     }
     
+    lazy var loginViewController: LoginViewController = {
+        let loginVC = LoginViewController()
+        loginVC.delegate = self
+        return loginVC
+    }()
+    
     func handleLogout(){
         do {
             try FIRAuth.auth()?.signOut()
         } catch let error {
             print("error \(error)")
         }
-        present(LoginViewController(), animated: true, completion: nil)
+        present(loginViewController, animated: true, completion: nil)
     }
     
     var messages: [ChatMessage]{
@@ -85,13 +90,19 @@ class HomeViewController: UITableViewController {
     var messagesDict = [String : ChatMessage]()
     
     func observeMessages(){
-        let ref = FIRDatabase.database().reference().child("messages")
-        ref.observe(.childAdded, with: { (snapshot) in
-            guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let message = ChatMessage.from(dict: dict) else { return }
-            self.messagesDict[message.toID] = message
-            
-            self.tableView.reloadData()
+        guard let user = FIRAuth.auth()?.currentUser else { return }
+        self.messagesDict.removeAll()
+        self.tableView.reloadData()
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        let messagesRef = FIRDatabase.database().reference().child("messages")
+        userMessagesRef.child(user.uid).observe(.childAdded, with: { (snapshot) in
+            messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                guard let message = ChatMessage.from(dict: dict) else { return }
+                self.messagesDict[message.toID] = message
+                
+                self.tableView.reloadData()
+            }, withCancel: nil)
         }, withCancel: nil)
     }
 }
@@ -116,6 +127,13 @@ extension HomeViewController{
 extension HomeViewController: NewMessagesDelegate{
     func newMessagesDidChoose(user: User) {
         showChatLog(forUser: user)
+    }
+}
+
+extension HomeViewController: LoginViewContollerDelegate{
+    func loginViewControllerDidFinishLoginRegister() {
+        setUpNewUser()
+        loginViewController.dismiss(animated: true, completion: nil)
     }
 }
 
