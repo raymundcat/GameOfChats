@@ -29,10 +29,7 @@ class NewMessageViewController: UITableViewController{
     func fetchUsers(){
         FIRDatabase.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
             guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let name = dict["name"] as? String else { return }
-            guard let email = dict["email"] as? String else { return }
-            let imgURL = dict["profileImageURL"] as? String
-            let user = User(name: name, email: email, imgURL: imgURL)
+            guard let user = User.from(dict: dict) else { return }
             self.users.append(user)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
