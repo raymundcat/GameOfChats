@@ -12,11 +12,24 @@ import FirebaseDatabase
 
 class HomeViewController: UITableViewController {
 
+    lazy var titleView: TitleView = {
+        let view = TitleView()
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
         
+        titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        navigationItem.titleView = titleView
+        
+        checkUserLoggedIn()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         checkUserLoggedIn()
     }
     
@@ -35,23 +48,9 @@ class HomeViewController: UITableViewController {
             FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
                 guard let user = User.from(dict: dict) else { return }
-                self.setupNavBar(withUser: user)
+                self.titleView.user = user
             })
         }
-    }
-    
-    lazy var titleView: TitleView = {
-        let view = TitleView()
-        return view
-    }()
-    
-    func setupNavBar(withUser user: User){
-        titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        if let stringUrl = user.imgURL, let url = URL(string: stringUrl) {
-            titleView.imageView.loadCachedImage(fromURL: url, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
-        }
-        titleView.nameLabel.text = user.name
-        navigationItem.titleView = titleView
     }
     
     func handleLogout(){
@@ -114,5 +113,15 @@ class TitleView: UIView{
         setupContainerView()
         setupImageView()
         setupNameLabel()
+    }
+    
+    var user: User?{
+        didSet{
+            guard let user = user else { return }
+            if let stringUrl = user.imgURL, let url = URL(string: stringUrl) {
+                imageView.loadCachedImage(fromURL: url, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
+            }
+            nameLabel.text = user.name
+        }
     }
 }
