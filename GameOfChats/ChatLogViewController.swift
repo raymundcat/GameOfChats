@@ -34,15 +34,13 @@ class ChatLogViewController: UICollectionViewController{
         return sendButton
     }()
     
-    var user: User?
-    
-    
+    var user: User!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = .white
         
-        title = "Chat Logs"
+        title = user.name
         view.addSubview(containerView)
         setupInputComponents()
     }

@@ -19,6 +19,7 @@ class HomeViewController: UITableViewController {
     
     func showChatLog(forUser user: User){
         let vc = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        vc.user = user
         navigationController?.pushViewController(vc, animated: true)
     }
     
