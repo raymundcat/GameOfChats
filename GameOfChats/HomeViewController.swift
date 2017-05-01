@@ -75,13 +75,19 @@ class HomeViewController: UITableViewController {
     }
     
     var messages = [ChatMessage]()
+    var messagesDict = [String : ChatMessage]()
     
     func observeMessages(){
         let ref = FIRDatabase.database().reference().child("messages")
         ref.observe(.childAdded, with: { (snapshot) in
             guard let dict = snapshot.value as? [String : AnyObject] else { return }
             guard let message = ChatMessage.from(dict: dict) else { return }
-            self.messages.append(message)
+            self.messagesDict[message.toID] = message
+            self.messages = Array(self.messagesDict.values)
+            self.messages.sort(by: { (message1, message2) -> Bool in
+                return message1.timestamp > message2.timestamp
+            })
+            
             self.tableView.reloadData()
         }, withCancel: nil)
     }
@@ -173,6 +179,19 @@ class TitleView: UIView{
     }
 }
 
+extension Date{
+    
+    func simpleTimeFormat() -> String?{
+        return format(withString: "hh:mm:ss a")
+    }
+    
+    func format(withString format: String) -> String{
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: self)
+    }
+}
+
 class UserMessageCell: UITableViewCell{
     
     var message: ChatMessage?{
@@ -180,6 +199,8 @@ class UserMessageCell: UITableViewCell{
             guard let message = message else { return }
             subTitleLabel.text = message.text
             titleLabel.text = "..."
+            let time = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
+            timeLabel.text = time.simpleTimeFormat()
             
             FIRDatabase.database().reference().child("users").child(message.toID).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
@@ -258,7 +279,7 @@ class UserMessageCell: UITableViewCell{
         subTitleLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
         subTitleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
         
-        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 8).isActive = true
+        timeLabel.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor).isActive = true
         timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
     }
     
