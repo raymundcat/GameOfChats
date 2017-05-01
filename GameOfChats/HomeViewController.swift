@@ -23,8 +23,12 @@ class HomeViewController: UITableViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    let cellID = "cellID"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellID)
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
         
@@ -32,6 +36,7 @@ class HomeViewController: UITableViewController {
         navigationItem.titleView = titleView
         
         checkUserLoggedIn()
+        observeMessages()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -67,6 +72,35 @@ class HomeViewController: UITableViewController {
             print("error \(error)")
         }
         present(LoginViewController(), animated: true, completion: nil)
+    }
+    
+    var messages = [ChatMessage]()
+    
+    func observeMessages(){
+        let ref = FIRDatabase.database().reference().child("messages")
+        ref.observe(.childAdded, with: { (snapshot) in
+            guard let dict = snapshot.value as? [String : AnyObject] else { return }
+            guard let message = ChatMessage.from(dict: dict) else { return }
+            self.messages.append(message)
+            self.tableView.reloadData()
+        }, withCancel: nil)
+    }
+}
+
+extension HomeViewController{
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 65.0
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? UserMessageCell else { return UITableViewCell() }
+        cell.message = messages[indexPath.row]
+        return cell
     }
 }
 
@@ -136,5 +170,107 @@ class TitleView: UIView{
             }
             nameLabel.text = user.name
         }
+    }
+}
+
+class UserMessageCell: UITableViewCell{
+    
+    var message: ChatMessage?{
+        didSet{
+            guard let message = message else { return }
+            subTitleLabel.text = message.text
+            titleLabel.text = "..."
+            
+            FIRDatabase.database().reference().child("users").child(message.toID).observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+                self.user = user
+            }, withCancel: nil)
+        }
+    }
+    
+    private (set) var user: User?{
+        didSet{
+            guard let user = user else { return }
+            self.titleLabel.text = user.name
+            if let url = user.imgURL{
+                self.imgURL = URL(string: url)
+            }
+        }
+    }
+    
+    var imgURL: URL?{
+        didSet{
+            guard let imgURL = imgURL else {
+                self.profileImageView.image = #imageLiteral(resourceName: "winter-logo")
+                return
+            }
+            self.profileImageView.loadCachedImage(fromURL: imgURL, withPlaceHolder: #imageLiteral(resourceName: "winter-logo"))
+        }
+    }
+    
+    lazy var profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+    
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 17)
+        return label
+    }()
+    
+    lazy var subTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+    
+    lazy var timeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .lightGray
+        return label
+    }()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        addSubview(profileImageView)
+        addSubview(titleLabel)
+        addSubview(subTitleLabel)
+        addSubview(timeLabel)
+        setupImageView()
+        setupLabels()
+    }
+    
+    func setupLabels(){
+        titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
+        titleLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
+        titleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
+        
+        subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
+        subTitleLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
+        subTitleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
+        
+        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 8).isActive = true
+        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
+    }
+    
+    func setupImageView(){
+        profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        profileImageView.layer.cornerRadius = 25
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
