@@ -14,8 +14,14 @@ class HomeViewController: UITableViewController {
 
     lazy var titleView: TitleView = {
         let view = TitleView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTitleViewTap)))
         return view
     }()
+    
+    func handleTitleViewTap(){
+        let vc = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
