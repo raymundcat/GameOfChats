@@ -9,7 +9,13 @@
 import UIKit
 import FirebaseDatabase
 
+protocol NewMessagesDelegate: class {
+    func newMessagesDidChoose(user: User)
+}
+
 class NewMessageViewController: UITableViewController{
+    
+    weak var delegate: NewMessagesDelegate?
     
     var users: [User] = [User]()
     
@@ -47,6 +53,12 @@ class NewMessageViewController: UITableViewController{
         }
         cell.user = users[indexPath.row]
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: {
+            self.delegate?.newMessagesDidChoose(user: self.users[indexPath.row])
+        })
     }
 }
 

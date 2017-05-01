@@ -34,6 +34,10 @@ class ChatLogViewController: UICollectionViewController{
         return sendButton
     }()
     
+    var user: User?
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.backgroundColor = .white

@@ -14,11 +14,10 @@ class HomeViewController: UITableViewController {
 
     lazy var titleView: TitleView = {
         let view = TitleView()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTitleViewTap)))
         return view
     }()
     
-    func handleTitleViewTap(){
+    func showChatLog(forUser user: User){
         let vc = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -41,6 +40,7 @@ class HomeViewController: UITableViewController {
     
     func handleNewMessage(){
         let newMessageVC = NewMessageViewController()
+        newMessageVC.delegate = self
         let newNavController = UINavigationController(rootViewController: newMessageVC)
         present(newNavController, animated: true, completion: nil)
     }
@@ -66,6 +66,12 @@ class HomeViewController: UITableViewController {
             print("error \(error)")
         }
         present(LoginViewController(), animated: true, completion: nil)
+    }
+}
+
+extension HomeViewController: NewMessagesDelegate{
+    func newMessagesDidChoose(user: User) {
+        showChatLog(forUser: user)
     }
 }
 
