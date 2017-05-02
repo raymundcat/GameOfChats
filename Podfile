@@ -11,6 +11,7 @@ target 'GameOfChats' do
   pod 'Firebase/Database'
   pod 'Firebase/Storage'
   pod 'PromiseKit', '~> 4.0'
+  pod 'Anchorage', '~> 3.0'
   
   target 'GameOfChatsTests' do
     inherit! :search_paths

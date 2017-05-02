@@ -1,4 +1,5 @@
 PODS:
+  - Anchorage (3.2.0)
   - Firebase/Auth (3.16.0):
     - Firebase/Core
     - FirebaseAuth (= 3.1.1)
@@ -52,6 +53,7 @@ PODS:
     - PromiseKit/CorePromise
 
 DEPENDENCIES:
+  - Anchorage (~> 3.0)
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
@@ -59,6 +61,7 @@ DEPENDENCIES:
   - PromiseKit (~> 4.0)
 
 SPEC CHECKSUMS:
+  Anchorage: b3a5931166e2fe8361efff250dac07346e935cdf
   Firebase: 21bf4a89d3f01bfbe11adc3a5d934a4a3d3a5fd6
   FirebaseAnalytics: 920e46455f27b0a52a80907a6d9b73ee4bd1c635
   FirebaseAuth: cc8a1824170adbd351edb7f994490a3fb5c18be6
@@ -70,6 +73,6 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   PromiseKit: 779f2e41faf62d854e7593026ddbcb0bb5c5002d
 
-PODFILE CHECKSUM: 76d250f4666396affb77fbb0282ef77667889211
+PODFILE CHECKSUM: 4f73026d63a8cd43ef430c3912b4c97fc49f439b
 
 COCOAPODS: 1.2.0
