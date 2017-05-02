@@ -166,6 +166,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleViewTap)))
         view.backgroundColor = .heroBlue
         view.addSubview(inputsContainerView)
         view.addSubview(loginButton)
@@ -178,6 +179,10 @@ class LoginViewController: UIViewController {
         setupRegisterSegmentedControl()
         
         segmentControlValueChanged()
+    }
+    
+    func handleViewTap(){
+        view.endEditing(true)
     }
     
     func setupRegisterSegmentedControl(){
