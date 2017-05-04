@@ -21,18 +21,13 @@ class UserMessageCell: UITableViewCell{
             let time = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
             timeLabel.text = time.simpleTimeFormat()
             
-            var userID = ""
-            if currentUser.uid == message.fromID {
-                userID = message.toID
-            }else if currentUser.uid == message.toID{
-                userID = message.fromID
+            if let partnerID = message.getChatPartner(ofUser: currentUser.uid){
+                FIRDatabase.database().reference().child("users").child(partnerID).observeSingleEvent(of: .value, with: { (snapshot) in
+                    guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                    guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+                    self.user = user
+                }, withCancel: nil)
             }
-            
-            FIRDatabase.database().reference().child("users").child(userID).observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
-                self.user = user
-            }, withCancel: nil)
         }
     }
     

@@ -122,6 +122,16 @@ extension HomeViewController{
         cell.message = messages[indexPath.row]
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else { return }
+        guard let partnerID = messages[indexPath.row].getChatPartner(ofUser: userID) else { return }
+        FIRDatabase.database().reference().child("users").child(partnerID).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dict = snapshot.value as? [String : AnyObject] else { return }
+            guard let partnerUser = User.from(dict: dict, withID: snapshot.key) else { return }
+            self.showChatLog(forUser: partnerUser)
+        }, withCancel: nil)
+    }
 }
 
 extension HomeViewController: NewMessagesDelegate{
@@ -134,18 +144,5 @@ extension HomeViewController: LoginViewContollerDelegate{
     func loginViewControllerDidFinishLoginRegister() {
         setUpNewUser()
         loginViewController.dismiss(animated: true, completion: nil)
-    }
-}
-
-extension Date{
-    
-    func simpleTimeFormat() -> String?{
-        return format(withString: "hh:mm:ss a")
-    }
-    
-    func format(withString format: String) -> String{
-        let formatter = DateFormatter()
-        formatter.dateFormat = format
-        return formatter.string(from: self)
     }
 }

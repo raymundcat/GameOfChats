@@ -28,6 +28,8 @@
 		ECBA09841EB7C62100ACDAF1 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09831EB7C62100ACDAF1 /* UserProfile.swift */; };
 		ECBA09861EB7C69300ACDAF1 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09851EB7C69300ACDAF1 /* ChatMessage.swift */; };
 		ECBA09881EB7C6C000ACDAF1 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09871EB7C6C000ACDAF1 /* UserCell.swift */; };
+		ECBA098C1EBBADAE00ACDAF1 /* Date+Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */; };
+		ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */; };
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
 		ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
@@ -84,6 +86,8 @@
 		ECBA09831EB7C62100ACDAF1 /* UserProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		ECBA09851EB7C69300ACDAF1 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		ECBA09871EB7C6C000ACDAF1 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Formatters.swift"; sourceTree = "<group>"; };
+		ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfChats-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogViewController.swift; sourceTree = "<group>"; };
@@ -166,6 +170,7 @@
 		EC30E9B51EAD3253005E2E81 /* GameOfChats */ = {
 			isa = PBXGroup;
 			children = (
+				ECBA09891EBA6C0400ACDAF1 /* ChatLogs */,
 				EC741C781EB4B77200B5D0B1 /* New Message */,
 				EC30E9EE1EAD38D0005E2E81 /* Home */,
 				EC30E9E61EAD3705005E2E81 /* Login */,
@@ -291,8 +296,24 @@
 			isa = PBXGroup;
 			children = (
 				EC741C7A1EB4B79100B5D0B1 /* NewMessageViewController.swift */,
-				ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */,
 				ECBA09871EB7C6C000ACDAF1 /* UserCell.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		ECBA09891EBA6C0400ACDAF1 /* ChatLogs */ = {
+			isa = PBXGroup;
+			children = (
+				ECBA098A1EBA6C1000ACDAF1 /* Views */,
+			);
+			name = ChatLogs;
+			sourceTree = "<group>";
+		};
+		ECBA098A1EBA6C1000ACDAF1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */,
+				ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -301,6 +322,7 @@
 			isa = PBXGroup;
 			children = (
 				ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */,
+				ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -591,7 +613,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECBA098C1EBBADAE00ACDAF1 /* Date+Formatters.swift in Sources */,
 				ECBA09801EB7C58F00ACDAF1 /* UserMessageCell.swift in Sources */,
+				ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */,
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,
 				EC30E9E91EAD372E005E2E81 /* LoginViewController.swift in Sources */,

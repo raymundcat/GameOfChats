@@ -10,7 +10,7 @@ import UIKit
 import FirebaseDatabase
 import FirebaseAuth
 
-class ChatLogViewController: UICollectionViewController{
+class ChatLogViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
     lazy var containerView: UIView = {
         let containerView = UIView()
@@ -37,23 +37,33 @@ class ChatLogViewController: UICollectionViewController{
     
     var user: User!
     
+    private let cellID = "cellID"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.backgroundColor = .white
         
         title = user.name
         view.addSubview(containerView)
         setupInputComponents()
+        observeMessages()
     }
     
     var messages = [ChatMessage]()
     
     func observeMessages(){
-        let ref = FIRDatabase.database().reference().child("messages")
-        ref.observeSingleEvent(of: .childAdded, with: { (snapshot) in
-            guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let message = ChatMessage.from(dict: dict) else { return }
-            self.messages.append(message)
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        let messagesRef = FIRDatabase.database().reference().child("messages")
+        userMessagesRef.child(user.id).observe(.childAdded, with: { (snapshot) in
+            messagesRef.child(snapshot.key).observe(.value, with: { (snapshot) in
+                guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                guard let message = ChatMessage.from(dict: dict) else { return }
+                self.messages.append(message)
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
+            }, withCancel: nil)
         }, withCancel: nil)
     }
     
@@ -107,6 +117,27 @@ class ChatLogViewController: UICollectionViewController{
         }
         
         inputTextField.text = nil
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? ChatMessageCell else { return UICollectionViewCell() }
+        cell.message = messages[indexPath.row]
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let text = messages[indexPath.row].text
+        return CGSize(width: collectionView.frame.width, height: estimateHeight(ofText: text, forMaxWidth: 200).height + 20)
+    }
+    
+    private func estimateHeight(ofText text: String, forMaxWidth maxWidth: CGFloat) -> CGRect{
+        let maxSize = CGSize(width: maxWidth, height: 2000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: maxSize, options: options, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 16)], context: nil)
     }
 }
 

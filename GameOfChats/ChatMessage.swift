@@ -31,4 +31,13 @@ struct ChatMessage {
                 "fromID" : fromID,
                 "timestamp" : timestamp]
     }
+    
+    func getChatPartner(ofUser userID: String) -> String?{
+        if toID == userID {
+            return fromID
+        }else if fromID == userID {
+            return toID
+        }
+        return nil
+    }
 }
