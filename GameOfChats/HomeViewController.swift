@@ -99,7 +99,8 @@ class HomeViewController: UITableViewController {
             messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
                 guard let message = ChatMessage.from(dict: dict) else { return }
-                self.messagesDict[message.toID] = message
+                guard let partnerID = message.getChatPartner(ofUser: user.uid) else { return }
+                self.messagesDict[partnerID] = message
                 
                 self.tableView.reloadData()
             }, withCancel: nil)

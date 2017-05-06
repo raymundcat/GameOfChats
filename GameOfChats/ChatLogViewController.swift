@@ -38,10 +38,10 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     var user: User!
     
     private let cellID = "cellID"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
+        collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 58, 0)
         collectionView?.backgroundColor = .white
         
         title = user.name
@@ -62,6 +62,7 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
                 self.messages.append(message)
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
+                    self.collectionView?.scrollToItem(at: IndexPath(row: self.messages.count - 1, section: 0), at: .bottom, animated: true)
                 }
             }, withCancel: nil)
         }, withCancel: nil)
@@ -124,20 +125,29 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? ChatMessageCell else { return UICollectionViewCell() }
-        cell.message = messages[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
+        let message = messages[indexPath.row]
+        guard let currentUserID = FIRAuth.auth()?.currentUser?.uid,
+            let partnerID = message.getChatPartner(ofUser: currentUserID) else { return cell }
+        
+        let messageType: MessageCellType = message.fromID == partnerID ? .partnerUser : .currentUser
+        cell.layoutCell(withMessage: message, type: messageType)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let text = messages[indexPath.row].text
-        return CGSize(width: collectionView.frame.width, height: estimateHeight(ofText: text, forMaxWidth: 200).height + 20)
+        return CGSize(width: collectionView.frame.width, height: estimateHeight(ofText: text, forMaxWidth: 200).height + 30)
     }
     
     private func estimateHeight(ofText text: String, forMaxWidth maxWidth: CGFloat) -> CGRect{
         let maxSize = CGSize(width: maxWidth, height: 2000)
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         return NSString(string: text).boundingRect(with: maxSize, options: options, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 16)], context: nil)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView?.collectionViewLayout.invalidateLayout()
     }
 }
 
