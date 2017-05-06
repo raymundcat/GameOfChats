@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import Anchorage
 
 class ChatLogViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
@@ -35,19 +36,26 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         return sendButton
     }()
     
+    lazy var separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .lightGray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     var user: User!
     
-    private let cellID = "cellID"
+    fileprivate let cellID = "cellID"
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
         collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 58, 0)
         collectionView?.backgroundColor = .white
+        collectionView?.keyboardDismissMode = .interactive
         
         title = user.name
-        view.addSubview(containerView)
-        setupInputComponents()
         observeMessages()
+        setupInputComponents()
     }
     
     var messages = [ChatMessage]()
@@ -69,31 +77,25 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func setupInputComponents(){
-        containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
         
         containerView.addSubview(sendButton)
-        sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        sendButton.rightAnchor == containerView.rightAnchor
+        sendButton.centerYAnchor == containerView.centerYAnchor
+        sendButton.widthAnchor == 50
+        sendButton.heightAnchor == containerView.heightAnchor
         
         containerView.addSubview(inputTextField)
-        inputTextField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 16).isActive = true
-        inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor, constant: 8).isActive = true
-        inputTextField.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        inputTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        inputTextField.leftAnchor == containerView.leftAnchor + 8
+        inputTextField.rightAnchor == sendButton.leftAnchor
+        inputTextField.centerYAnchor == containerView.centerYAnchor
+        inputTextField.heightAnchor == containerView.heightAnchor
         
-        let separatorView = UIView()
         containerView.addSubview(separatorView)
-        separatorView.backgroundColor = .lightGray
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        separatorView.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        separatorView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        separatorView.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        separatorView.leftAnchor == containerView.leftAnchor
+        separatorView.rightAnchor == containerView.rightAnchor
+        separatorView.topAnchor == containerView.topAnchor
+        separatorView.heightAnchor == 0.5
     }
     
     func handleSend(){
@@ -119,7 +121,28 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         
         inputTextField.text = nil
     }
+}
+
+//MARK: Input accessory views
+
+extension ChatLogViewController{
     
+    override var canBecomeFirstResponder: Bool{
+        get{
+            return true
+        }
+    }
+    
+    override var inputAccessoryView: UIView?{
+        get{
+            return containerView
+        }
+    }
+}
+
+//MARK: CollectionView Delegates
+
+extension ChatLogViewController{
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
     }
@@ -137,7 +160,9 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let text = messages[indexPath.row].text
-        return CGSize(width: collectionView.frame.width, height: estimateHeight(ofText: text, forMaxWidth: 200).height + 30)
+        let width = UIScreen.main.bounds.width
+        let height = estimateHeight(ofText: text, forMaxWidth: 200).height + 30
+        return CGSize(width: width, height: height)
     }
     
     private func estimateHeight(ofText text: String, forMaxWidth maxWidth: CGFloat) -> CGRect{
@@ -149,7 +174,13 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         collectionView?.collectionViewLayout.invalidateLayout()
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        inputTextField.endEditing(true)
+    }
 }
+
+//MARK: Textfield Delegates
 
 extension ChatLogViewController: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
