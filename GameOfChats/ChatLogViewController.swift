@@ -25,6 +25,7 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         textField.delegate = self
         textField.placeholder = "Enter Message.."
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.keyboardType = .default
         return textField
     }()
     
@@ -43,17 +44,17 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         return view
     }()
     
-    var user: User!
+    var partnerUser: User!
     
     fileprivate let cellID = "cellID"
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellID)
-        collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 58, 0)
+        collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 8, 0)
         collectionView?.backgroundColor = .white
         collectionView?.keyboardDismissMode = .interactive
         
-        title = user.name
+        title = partnerUser.name
         observeMessages()
         setupInputComponents()
     }
@@ -61,9 +62,10 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     var messages = [ChatMessage]()
     
     func observeMessages(){
-        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else { return }
         let messagesRef = FIRDatabase.database().reference().child("messages")
-        userMessagesRef.child(user.id).observe(.childAdded, with: { (snapshot) in
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        userMessagesRef.child(userID).child(partnerUser.id).observe(.childAdded, with: { (snapshot) in
             messagesRef.child(snapshot.key).observe(.value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
                 guard let message = ChatMessage.from(dict: dict) else { return }
@@ -106,7 +108,7 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let newMessageRef = messagesRef.childByAutoId()
         
-        let toID = user.id
+        let toID = partnerUser.id
         let fromID = currentUser.uid
         let timestamp = Int(NSDate().timeIntervalSince1970)
         let message = ChatMessage(text: text,
@@ -115,8 +117,8 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
                                   timestamp: timestamp)
         newMessageRef.setValue(message.getValue()) { (error, ref) in
             guard error == nil else { return }
-            userMessagesRef.child(message.fromID).updateChildValues([ref.key : 1])
-            userMessagesRef.child(message.toID).updateChildValues([ref.key : 1])
+            userMessagesRef.child(message.fromID).child(toID).updateChildValues([ref.key : 1])
+            userMessagesRef.child(message.toID).child(fromID).updateChildValues([ref.key : 1])
         }
         
         inputTextField.text = nil
@@ -176,7 +178,7 @@ extension ChatLogViewController{
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        inputTextField.endEditing(true)
+        view.endEditing(true)
     }
 }
 

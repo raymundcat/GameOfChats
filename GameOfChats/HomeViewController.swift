@@ -19,7 +19,7 @@ class HomeViewController: UITableViewController {
     
     func showChatLog(forUser user: User){
         let vc = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        vc.user = user
+        vc.partnerUser = user
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -79,30 +79,23 @@ class HomeViewController: UITableViewController {
         present(loginViewController, animated: true, completion: nil)
     }
     
-    var messages: [ChatMessage]{
-        var messages = Array(messagesDict.values)
-        messages.sort(by: { (message1, message2) -> Bool in
-            return message1.timestamp > message2.timestamp
-        })
-        return messages
-    }
-    
+    var messages: [ChatMessage] = [ChatMessage]()
     var messagesDict = [String : ChatMessage]()
     
     func observeMessages(){
         guard let user = FIRAuth.auth()?.currentUser else { return }
-        self.messagesDict.removeAll()
-        self.tableView.reloadData()
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let messagesRef = FIRDatabase.database().reference().child("messages")
+        
         userMessagesRef.child(user.uid).observe(.childAdded, with: { (snapshot) in
-            messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let message = ChatMessage.from(dict: dict) else { return }
-                guard let partnerID = message.getChatPartner(ofUser: user.uid) else { return }
-                self.messagesDict[partnerID] = message
-                
-                self.handleReloadTable()
+            userMessagesRef.child(user.uid).child(snapshot.key).queryLimited(toLast: 1).observe(.childAdded, with: { (snapshot) in
+                messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                    guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                    guard let message = ChatMessage.from(dict: dict) else { return }
+                    guard let partnerID = message.getChatPartner(ofUser: user.uid) else { return }
+                    self.messagesDict[partnerID] = message
+                    self.handleReloadTable()
+                }, withCancel: nil)
             }, withCancel: nil)
         }, withCancel: nil)
     }
@@ -112,9 +105,17 @@ class HomeViewController: UITableViewController {
         reloadTimer?.invalidate()
         reloadTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
             DispatchQueue.main.async {
+                self.messages = self.messagesDict.getSortedMessages()
                 self.tableView.reloadData()
             }
         })
+    }
+}
+
+extension Dictionary where Key == String, Value == ChatMessage{
+    func getSortedMessages() -> [ChatMessage] {
+        let array = Array(values)
+        return array.sorted{ $0.0.timestamp > $0.1.timestamp }
     }
 }
 

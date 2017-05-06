@@ -8,6 +8,7 @@
 
 import UIKit
 import Anchorage
+import FirebaseDatabase
 
 class ChatMessageCell: UICollectionViewCell {
     
@@ -28,6 +29,8 @@ class ChatMessageCell: UICollectionViewCell {
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .heroBlue
+        imageView.layer.masksToBounds = true
+        imageView.isHidden = true
         return imageView
     }()
     
@@ -62,6 +65,14 @@ class ChatMessageCell: UICollectionViewCell {
     func layoutCell(withMessage message: ChatMessage, type: MessageCellType){
         
         textLabel.text = message.text
+        
+        FIRDatabase.database().reference().child("users").child(message.fromID).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dict = snapshot.value as? [String : AnyObject] else { return }
+            guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+            guard let url = user.imgURL else { return }
+            guard let imgURL = URL(string: url) else { return }
+            self.imageView.loadCachedImage(fromURL: imgURL, withPlaceHolder: nil)
+        }, withCancel: nil)
         
         switch type {
         case .currentUser:
