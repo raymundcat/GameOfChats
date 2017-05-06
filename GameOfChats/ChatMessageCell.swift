@@ -36,29 +36,32 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(bubbleView)
         addSubview(imageView)
         bubbleView.addSubview(textLabel)
+        
+        imageView.leftAnchor == self.leftAnchor + 8
+        imageView.widthAnchor == 30
+        imageView.heightAnchor == imageView.widthAnchor
+        imageView.layer.cornerRadius = 15
+        
+        bubbleView.topAnchor == self.topAnchor
+        bubbleView.bottomAnchor == self.bottomAnchor
+        bubbleView.widthAnchor <= 220
+        bubbleView.widthAnchor >= 60
+        rightBubbleAnchor = bubbleView.rightAnchor == self.rightAnchor - 8
+        leftBubbleAnchor = bubbleView.leftAnchor == imageView.rightAnchor + 8
+        
+        textLabel.edgeAnchors == bubbleView.edgeAnchors + 10
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("")
     }
     
-    private var leftBubbleAnchor: NSLayoutConstraint?
-    private var rightBubbleAnchor: NSLayoutConstraint?
+    private var leftBubbleAnchor: NSLayoutConstraint!
+    private var rightBubbleAnchor: NSLayoutConstraint!
     
     func layoutCell(withMessage message: ChatMessage, type: MessageCellType){
         
         textLabel.text = message.text
-        imageView.leftAnchor == self.leftAnchor + 8
-        imageView.widthAnchor == 40
-        imageView.heightAnchor == imageView.widthAnchor
-        imageView.layer.cornerRadius = 20
-        
-        bubbleView.topAnchor == self.topAnchor
-        bubbleView.bottomAnchor == self.bottomAnchor
-        bubbleView.widthAnchor <= 220
-        bubbleView.widthAnchor >= 60
-        
-        textLabel.edgeAnchors == bubbleView.edgeAnchors + 10
         
         switch type {
         case .currentUser:
@@ -66,16 +69,16 @@ class ChatMessageCell: UICollectionViewCell {
             bubbleView.backgroundColor = .heroBlue
             textLabel.textColor = .white
             
-            leftBubbleAnchor?.isActive = false
-            rightBubbleAnchor = bubbleView.rightAnchor == self.rightAnchor - 8 ~ .high
+            leftBubbleAnchor.isActive = false
+            rightBubbleAnchor.isActive = true
             break
         case .partnerUser:
             imageView.isHidden = false
             bubbleView.backgroundColor = .lightGray
             textLabel.textColor = .black
             
-            rightBubbleAnchor?.isActive = false
-            leftBubbleAnchor = bubbleView.leftAnchor == imageView.rightAnchor + 8 ~ .high
+            rightBubbleAnchor.isActive = false
+            leftBubbleAnchor.isActive = true
             break
         }
     }
