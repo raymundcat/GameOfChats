@@ -242,17 +242,8 @@
 			children = (
 				ECDBCCC11EB6287300B17297 /* Helpers */,
 				EC741C751EB4B6F100B5D0B1 /* Entities */,
-				EC30E9EB1EAD3793005E2E81 /* Extensions */,
 			);
 			name = Overalls;
-			sourceTree = "<group>";
-		};
-		EC30E9EB1EAD3793005E2E81 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				EC30E9EC1EAD37A4005E2E81 /* UIColor+Extensions.swift */,
-			);
-			name = Extensions;
 			sourceTree = "<group>";
 		};
 		EC30E9EE1EAD38D0005E2E81 /* Home */ = {
@@ -321,6 +312,7 @@
 		ECDBCCC11EB6287300B17297 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				EC30E9EC1EAD37A4005E2E81 /* UIColor+Extensions.swift */,
 				ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */,
 				ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */,
 			);

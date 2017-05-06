@@ -66,13 +66,19 @@ class ChatMessageCell: UICollectionViewCell {
         
         textLabel.text = message.text
         
-        FIRDatabase.database().reference().child("users").child(message.fromID).observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
-            guard let url = user.imgURL else { return }
-            guard let imgURL = URL(string: url) else { return }
-            self.imageView.loadCachedImage(fromURL: imgURL, withPlaceHolder: nil)
-        }, withCancel: nil)
+        if let cachedUser = userChache.getUser(withID: message.fromID){
+            guard let imgURL = cachedUser.imgURL, let url = URL(string: imgURL) else { return }
+            self.imageView.loadCachedImage(fromURL: url, withPlaceHolder: nil)
+        }else{
+            FIRDatabase.database().reference().child("users").child(message.fromID).observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+                userChache.save(user: user)
+                guard let url = user.imgURL else { return }
+                guard let imgURL = URL(string: url) else { return }
+                self.imageView.loadCachedImage(fromURL: imgURL, withPlaceHolder: nil)
+            }, withCancel: nil)
+        }
         
         switch type {
         case .currentUser:

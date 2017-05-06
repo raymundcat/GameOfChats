@@ -8,6 +8,8 @@
 
 import Foundation
 
+let userChache = UserCache()
+
 struct User {
     let id: String
     let name: String
@@ -19,5 +21,25 @@ struct User {
         guard let email = dict["email"] as? String else { return nil }
         let imgURL = dict["profileImageURL"] as? String
         return User(id: id, name: name, email: email, imgURL: imgURL)
+    }
+}
+
+class UserCache{
+    let userChache = NSCache<AnyObject, AnyObject>()
+    
+    func getUser(withID id: String) -> User?{
+        let userObject = userChache.object(forKey: id as AnyObject) as? UserObject
+        return userObject?.user
+    }
+    
+    func save(user: User){
+        userChache.setObject(UserObject(user: user), forKey: user.id as AnyObject)
+    }
+    
+    private class UserObject: NSObject{
+        let user: User
+        init(user: User) {
+            self.user = user
+        }
     }
 }
