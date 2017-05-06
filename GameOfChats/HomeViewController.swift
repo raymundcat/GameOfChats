@@ -102,9 +102,19 @@ class HomeViewController: UITableViewController {
                 guard let partnerID = message.getChatPartner(ofUser: user.uid) else { return }
                 self.messagesDict[partnerID] = message
                 
-                self.tableView.reloadData()
+                self.handleReloadTable()
             }, withCancel: nil)
         }, withCancel: nil)
+    }
+    
+    private var reloadTimer: Timer?
+    func handleReloadTable(){
+        reloadTimer?.invalidate()
+        reloadTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        })
     }
 }
 
