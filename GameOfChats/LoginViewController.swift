@@ -11,6 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 import PromiseKit
+import RxSwift
 
 protocol LoginViewContollerDelegate: class {
     func loginViewControllerDidFinishLoginRegister()
@@ -260,6 +261,42 @@ class LoginViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
+}
+
+protocol LoginInputs{
+    func loginButtonTapped()
+    func registerButtonTapped()
+}
+
+enum NoError: Error{
+    
+}
+
+protocol LoginOutputs{
+    var proceedToNextScreen: Variable<()> { get }
+}
+
+protocol LoginViewModelProtocol {
+    var inputs: LoginInputs { get }
+    var outPuts: LoginOutputs { get }
+}
+
+class LoginViewModel: LoginViewModelProtocol, LoginInputs, LoginOutputs{
+    
+    var proceedToNextScreen: Variable<()>{
+        return Variable()
+    }
+    
+    func loginButtonTapped(){
+        
+    }
+    
+    func registerButtonTapped(){
+        
+    }
+    
+    var inputs: LoginInputs { return self }
+    var outPuts: LoginOutputs { return self }
 }
 
 //registration/login stuff

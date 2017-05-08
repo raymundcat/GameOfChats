@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 import Anchorage
 
 class ChatLogViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
@@ -27,6 +28,14 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.keyboardType = .default
         return textField
+    }()
+    
+    lazy var uploadButton: UIButton = {
+        let sendButton = UIButton(type: .system)
+        sendButton.addTarget(self, action: #selector(handlePickImage), for: .touchUpInside)
+        sendButton.setTitle("Upload", for: .normal)
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        return sendButton
     }()
     
     lazy var sendButton: UIButton = {
@@ -81,17 +90,24 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     func setupInputComponents(){
         containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
         
+        containerView.addSubview(uploadButton)
         containerView.addSubview(sendButton)
+        containerView.addSubview(inputTextField)
+        
+        uploadButton.leftAnchor == containerView.leftAnchor + 8
+        uploadButton.centerYAnchor == containerView.centerYAnchor
+        uploadButton.widthAnchor == 50
+        uploadButton.heightAnchor == containerView.heightAnchor
+        
+        inputTextField.leftAnchor == uploadButton.rightAnchor + 8
+        inputTextField.rightAnchor == sendButton.leftAnchor
+        inputTextField.centerYAnchor == containerView.centerYAnchor
+        inputTextField.heightAnchor == containerView.heightAnchor
+        
         sendButton.rightAnchor == containerView.rightAnchor
         sendButton.centerYAnchor == containerView.centerYAnchor
         sendButton.widthAnchor == 50
         sendButton.heightAnchor == containerView.heightAnchor
-        
-        containerView.addSubview(inputTextField)
-        inputTextField.leftAnchor == containerView.leftAnchor + 8
-        inputTextField.rightAnchor == sendButton.leftAnchor
-        inputTextField.centerYAnchor == containerView.centerYAnchor
-        inputTextField.heightAnchor == containerView.heightAnchor
         
         containerView.addSubview(separatorView)
         separatorView.leftAnchor == containerView.leftAnchor
@@ -122,6 +138,37 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         }
         
         inputTextField.text = nil
+    }
+    
+    func handlePickImage(){
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func uploadImage(image: UIImage){
+        let randName = UUID().uuidString
+        let ref = FIRStorage.storage().reference().child("message_images").child(randName)
+        guard let jpegImage = UIImageJPEGRepresentation(image, 0.3) else { return }
+        ref.put(jpegImage, metadata: nil) { (metaData, error) in
+            if error != nil{
+                return
+            }
+        }
+    }
+}
+
+extension ChatLogViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let image = getImage(fromPickerViewInfo: info){
+            uploadImage(image: image)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }
 
