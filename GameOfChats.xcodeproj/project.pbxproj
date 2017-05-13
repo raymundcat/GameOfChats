@@ -30,6 +30,9 @@
 		ECBA09881EB7C6C000ACDAF1 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09871EB7C6C000ACDAF1 /* UserCell.swift */; };
 		ECBA098C1EBBADAE00ACDAF1 /* Date+Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */; };
 		ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */; };
+		ECBA099C1EC7329C00ACDAF1 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */; };
+		ECBA099E1EC734B000ACDAF1 /* LoginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099D1EC734B000ACDAF1 /* LoginAPI.swift */; };
+		ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099F1EC735FB00ACDAF1 /* Result.swift */; };
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
 		ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
@@ -88,6 +91,10 @@
 		ECBA09871EB7C6C000ACDAF1 /* UserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Formatters.swift"; sourceTree = "<group>"; };
 		ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
+		ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
+		ECBA099D1EC734B000ACDAF1 /* LoginAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
+		ECBA099F1EC735FB00ACDAF1 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		ECBA09A11EC73E1800ACDAF1 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfChats-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogViewController.swift; sourceTree = "<group>"; };
@@ -208,6 +215,7 @@
 				ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */,
 				EC741C701EB3645900B5D0B1 /* Constants.swift */,
 				ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */,
+				ECBA09A11EC73E1800ACDAF1 /* MyPlayground.playground */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -224,6 +232,7 @@
 		EC30E9E61EAD3705005E2E81 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				ECBA099A1EC7328600ACDAF1 /* Models */,
 				EC30E9E71EAD370A005E2E81 /* Views */,
 			);
 			name = Login;
@@ -271,6 +280,7 @@
 				ECBA09811EB7C5FC00ACDAF1 /* Errors.swift */,
 				ECBA09831EB7C62100ACDAF1 /* UserProfile.swift */,
 				ECBA09851EB7C69300ACDAF1 /* ChatMessage.swift */,
+				ECBA099F1EC735FB00ACDAF1 /* Result.swift */,
 			);
 			name = Entities;
 			sourceTree = "<group>";
@@ -307,6 +317,15 @@
 				ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		ECBA099A1EC7328600ACDAF1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */,
+				ECBA099D1EC734B000ACDAF1 /* LoginAPI.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		ECDBCCC11EB6287300B17297 /* Helpers */ = {
@@ -611,12 +630,15 @@
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,
 				EC30E9E91EAD372E005E2E81 /* LoginViewController.swift in Sources */,
+				ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */,
 				ECBA09821EB7C5FC00ACDAF1 /* Errors.swift in Sources */,
 				EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */,
+				ECBA099E1EC734B000ACDAF1 /* LoginAPI.swift in Sources */,
 				ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */,
 				ECBA09861EB7C69300ACDAF1 /* ChatMessage.swift in Sources */,
 				ECBA09881EB7C6C000ACDAF1 /* UserCell.swift in Sources */,
 				EC30E9B71EAD3253005E2E81 /* AppDelegate.swift in Sources */,
+				ECBA099C1EC7329C00ACDAF1 /* LoginPresenter.swift in Sources */,
 				EC741C771EB4B6FD00B5D0B1 /* User.swift in Sources */,
 				ECBA097E1EB7C56600ACDAF1 /* TitleView.swift in Sources */,
 				EC741C7B1EB4B79100B5D0B1 /* NewMessageViewController.swift in Sources */,

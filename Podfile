@@ -13,7 +13,8 @@ target 'GameOfChats' do
   pod 'PromiseKit', '~> 4.0'
   pod 'Anchorage', '~> 3.0'
   pod 'MBProgressHUD', '~> 1.0.0'
-  pod 'RxSwift',    '~> 3.0'
+  pod 'RxSwift'
+  pod 'RxCocoa'
   
   target 'GameOfChatsTests' do
     inherit! :search_paths

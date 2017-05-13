@@ -52,6 +52,8 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (4.1.7):
     - PromiseKit/CorePromise
+  - RxCocoa (3.4.0):
+    - RxSwift (~> 3.4)
   - RxSwift (3.4.0)
 
 DEPENDENCIES:
@@ -62,7 +64,8 @@ DEPENDENCIES:
   - Firebase/Storage
   - MBProgressHUD (~> 1.0.0)
   - PromiseKit (~> 4.0)
-  - RxSwift (~> 3.0)
+  - RxCocoa
+  - RxSwift
 
 SPEC CHECKSUMS:
   Anchorage: b3a5931166e2fe8361efff250dac07346e935cdf
@@ -77,8 +80,9 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   PromiseKit: 779f2e41faf62d854e7593026ddbcb0bb5c5002d
+  RxCocoa: d14ef6b6029e1ddc6e966508c09289090de68ff9
   RxSwift: 3789a1af753002a14edecdb698a2424624296a9c
 
-PODFILE CHECKSUM: 3aa6637a0a29dfdd7e391b7435f20743aac9537a
+PODFILE CHECKSUM: 14b535d92fe0f32425fe7bdf8eeb3237c0e3a487
 
 COCOAPODS: 1.2.0

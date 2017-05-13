@@ -66,7 +66,6 @@ class HomeViewController: UITableViewController {
     
     lazy var loginViewController: LoginViewController = {
         let loginVC = LoginViewController()
-        loginVC.delegate = self
         return loginVC
     }()
     
@@ -149,12 +148,5 @@ extension HomeViewController{
 extension HomeViewController: NewMessagesDelegate{
     func newMessagesDidChoose(user: User) {
         showChatLog(forUser: user)
-    }
-}
-
-extension HomeViewController: LoginViewContollerDelegate{
-    func loginViewControllerDidFinishLoginRegister() {
-        setUpNewUser()
-        loginViewController.dismiss(animated: true, completion: nil)
     }
 }
