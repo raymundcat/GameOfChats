@@ -12,9 +12,7 @@ import RxSwift
 class HomeViewController: UITableViewController {
     
     let disposeBag = DisposeBag()
-    
     var homeInput: HomeInput?
-    
     var homeOutput: HomeOutput?{
         didSet{
             homeOutput?.currentMessages.asObservable()
@@ -35,10 +33,6 @@ class HomeViewController: UITableViewController {
     }
     
     var messages: [ChatMessage] = [ChatMessage]()
-    
-    func handleLogout(){
-        
-    }
 }
 
 extension Dictionary where Key == String, Value == ChatMessage{

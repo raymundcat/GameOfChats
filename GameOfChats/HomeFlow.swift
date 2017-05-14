@@ -12,17 +12,14 @@ import RxSwift
 class HomeFlow: FlowController {
     
     let config: FlowConfig
-    let viewController: HomeViewController
-    let presenter: HomePresenter
-    
-    var loginFlow: LoginFlow?
-    
-    lazy var titleView: TitleView = {
+    private let viewController: HomeViewController
+    private let presenter: HomePresenter
+    private var loginFlow: LoginFlow?
+    private lazy var titleView: TitleView = {
         let view = TitleView()
         return view
     }()
-    
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     required init(config: FlowConfig) {
         self.config = config
@@ -34,9 +31,11 @@ class HomeFlow: FlowController {
     }
     
     func start() {
-        
         let loginConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
         loginFlow = LoginFlow(config: loginConfig)
+        loginFlow?.loginResult.subscribe({ _ in
+            self.presenter.viewDidLoad.onNext(true)
+        }).addDisposableTo(disposeBag)
         
         viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))

@@ -33,7 +33,7 @@
 		ECBA099C1EC7329C00ACDAF1 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */; };
 		ECBA099E1EC734B000ACDAF1 /* AuthAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */; };
 		ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099F1EC735FB00ACDAF1 /* Result.swift */; };
-		ECBA09A31EC77BF800ACDAF1 /* LoginCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A21EC77BF800ACDAF1 /* LoginCoordinator.swift */; };
+		ECBA09A31EC77BF800ACDAF1 /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */; };
 		ECBA09A51EC7812600ACDAF1 /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A41EC7812600ACDAF1 /* FlowController.swift */; };
 		ECBA09A81EC7AEB600ACDAF1 /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A71EC7AEB600ACDAF1 /* HomeFlow.swift */; };
 		ECBA09AA1EC7B02D00ACDAF1 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */; };
@@ -99,7 +99,7 @@
 		ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
 		ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthAPI.swift; sourceTree = "<group>"; };
 		ECBA099F1EC735FB00ACDAF1 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		ECBA09A21EC77BF800ACDAF1 /* LoginCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginCoordinator.swift; sourceTree = "<group>"; };
+		ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginFlow.swift; sourceTree = "<group>"; };
 		ECBA09A41EC7812600ACDAF1 /* FlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowController.swift; sourceTree = "<group>"; };
 		ECBA09A71EC7AEB600ACDAF1 /* HomeFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
 		ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
@@ -334,7 +334,7 @@
 			children = (
 				ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */,
 				ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */,
-				ECBA09A21EC77BF800ACDAF1 /* LoginCoordinator.swift */,
+				ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -656,7 +656,7 @@
 				ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */,
 				ECBA09821EB7C5FC00ACDAF1 /* Errors.swift in Sources */,
 				EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */,
-				ECBA09A31EC77BF800ACDAF1 /* LoginCoordinator.swift in Sources */,
+				ECBA09A31EC77BF800ACDAF1 /* LoginFlow.swift in Sources */,
 				ECBA099E1EC734B000ACDAF1 /* AuthAPI.swift in Sources */,
 				ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */,
 				ECBA09861EB7C69300ACDAF1 /* ChatMessage.swift in Sources */,

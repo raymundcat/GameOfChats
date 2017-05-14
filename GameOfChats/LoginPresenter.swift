@@ -21,7 +21,7 @@ protocol LoginOutput {
 
 class LoginPresenter: LoginInput, LoginOutput{
     
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     let loginResult = PublishSubject<String>()
     let registerResult = PublishSubject<String>()

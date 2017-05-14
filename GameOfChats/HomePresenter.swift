@@ -37,12 +37,10 @@ class HomePresenter: HomeInput, HomeOutput{
     let shouldOpenUsers = PublishSubject<Bool>()
     let shouldLogOut = PublishSubject<Bool>()
     
-    let authAPI : AuthAPIProtocol
-    let messagesAPI: MessageAPIProtocol
-    
-    var messagesDict = [String : ChatMessage]()
-    
-    let disposeBag = DisposeBag()
+    private let authAPI : AuthAPIProtocol
+    private let messagesAPI: MessageAPIProtocol
+    private var messagesDict = [String : ChatMessage]()
+    private let disposeBag = DisposeBag()
     
     init(authAPI : AuthAPIProtocol, messagesAPI: MessageAPIProtocol) {
         self.authAPI = authAPI
