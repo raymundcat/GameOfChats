@@ -39,7 +39,7 @@ class HomePresenter: HomeInput, HomeOutput{
     
     private let authAPI : AuthAPIProtocol
     private let messagesAPI: MessageAPIProtocol
-    private var messagesDict = [String : ChatMessage]()
+    private var messagesDict = Variable<[String : ChatMessage]>([:])
     private let disposeBag = DisposeBag()
     
     init(authAPI : AuthAPIProtocol, messagesAPI: MessageAPIProtocol) {
@@ -71,13 +71,21 @@ class HomePresenter: HomeInput, HomeOutput{
             guard let element = event.element, let user = element else { return }
             self.handleObserveMessages(ofUser: user.id)
         }.addDisposableTo(disposeBag)
+        
+        messagesDict.asObservable()
+            .throttle(1, scheduler: MainScheduler.instance)
+            .subscribe { (event) in
+                guard let dict = event.element else { return }
+                let array = Array(dict.values)
+                self.currentMessages.value = array
+        }.addDisposableTo(disposeBag)
     }
     
     private func handleObserveMessages(ofUser uid: String){
         messagesAPI.observeMessages(ofUser: uid).then{ message -> Void in
-            var messages = self.currentMessages.value
-            messages.append(message)
-            self.currentMessages.value = messages
+            guard let currentUser = self.currentUser.value else { return }
+            guard let partnerID = message.getChatPartner(ofUser: currentUser.id) else { return }
+            self.messagesDict.value[partnerID] = message
         }.catch { (error) in
             //handle error
         }
@@ -85,6 +93,7 @@ class HomePresenter: HomeInput, HomeOutput{
     
     private func handleViewDidLoad(){
         authAPI.getCurrentUser().then { user -> Void in
+            self.currentMessages.value = []
             self.currentUser.value = user
         }.catch { (error) in
             self.handleLogout()

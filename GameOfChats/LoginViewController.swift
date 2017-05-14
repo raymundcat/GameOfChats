@@ -31,28 +31,6 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    func handleLoginOrRegister(){
-        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
-            handleLogin()
-        }else{
-            handleRegister()
-        }
-    }
-    
-    var loginInput: LoginInput?
-    
-    func handleLogin(){
-        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
-        let credential = LoginCredential(email: email, password: password)
-        loginInput?.login.onNext(credential)
-    }
-    
-    func handleRegister(){
-        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
-        let form = RegistrationForm(name: name, email: email, password: password, profileImage: chosenImage)
-        loginInput?.register.onNext(form)
-    }
-    
     let nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Name"
@@ -141,6 +119,28 @@ class LoginViewController: UIViewController {
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
+    }
+    
+    var loginInput: LoginInput?
+    
+    func handleLoginOrRegister(){
+        if loginRegisterSegmentedControl.selectedSegmentIndex == 0 {
+            handleLogin()
+        }else{
+            handleRegister()
+        }
+    }
+    
+    func handleLogin(){
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        let credential = LoginCredential(email: email, password: password)
+        loginInput?.login.onNext(credential)
+    }
+    
+    func handleRegister(){
+        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
+        let form = RegistrationForm(name: name, email: email, password: password, profileImage: chosenImage)
+        loginInput?.register.onNext(form)
     }
     
     override func viewDidLoad() {

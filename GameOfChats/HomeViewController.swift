@@ -11,7 +11,7 @@ import RxSwift
 
 class HomeViewController: UITableViewController {
     
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     var homeInput: HomeInput?
     var homeOutput: HomeOutput?{
         didSet{
@@ -25,21 +25,14 @@ class HomeViewController: UITableViewController {
         }
     }
     
-    let cellID = "cellID"
+    fileprivate let cellID = "cellID"
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellID)
         homeInput?.viewDidLoad.onNext(true)
     }
     
-    var messages: [ChatMessage] = [ChatMessage]()
-}
-
-extension Dictionary where Key == String, Value == ChatMessage{
-    func getSortedMessages() -> [ChatMessage] {
-        let array = Array(values)
-        return array.sorted{ $0.0.timestamp > $0.1.timestamp }
-    }
+    fileprivate var messages: [ChatMessage] = [ChatMessage]()
 }
 
 extension HomeViewController{
