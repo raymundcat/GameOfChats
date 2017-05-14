@@ -7,12 +7,6 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseDatabase
-import FirebaseStorage
-import PromiseKit
-import RxSwift
-import RxCocoa
 
 class LoginViewController: UIViewController {
 
@@ -45,16 +39,18 @@ class LoginViewController: UIViewController {
         }
     }
     
-    let presenter = LoginPresenter()
+    var loginInput: LoginInput?
     
     func handleLogin(){
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
-        presenter.loginUser(credential: LoginCredential(email: email, password: password))
+        let credential = LoginCredential(email: email, password: password)
+        loginInput?.login.onNext(credential)
     }
     
     func handleRegister(){
         guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text, let chosenImage = profileImageView.image, chosenImage != #imageLiteral(resourceName: "winter-logo") else { return }
-        presenter.registerUser(form: RegistrationForm(name: name, email: email, password: password, profileImage: chosenImage))
+        let form = RegistrationForm(name: name, email: email, password: password, profileImage: chosenImage)
+        loginInput?.register.onNext(form)
     }
     
     let nameTextField: UITextField = {

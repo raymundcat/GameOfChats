@@ -10,39 +10,54 @@ import Foundation
 import RxSwift
 
 protocol LoginInput {
-    func loginUser(credential: LoginCredential)
-    func registerUser(form: RegistrationForm)
+    var login: PublishSubject<LoginCredential> { get }
+    var register: PublishSubject<RegistrationForm> { get }
 }
 
 protocol LoginOutput {
-    
+    var loginResult: PublishSubject<String> { get }
+    var registerResult: PublishSubject<String> { get }
 }
 
-protocol LoginNavigation {
+class LoginPresenter: LoginInput, LoginOutput{
     
-}
-
-class LoginPresenter: LoginInput{
+    let loginResult = PublishSubject<String>()
+    let registerResult = PublishSubject<String>()
     
-    private let loginAPI: LoginAPIProtocol
+    let login = PublishSubject<LoginCredential>()
+    let register = PublishSubject<RegistrationForm>()
     
-    init(loginAPI: LoginAPIProtocol = LoginAPI()) {
-        self.loginAPI = loginAPI
+    private let authAPI: AuthAPIProtocol
+    
+    init(authAPI: AuthAPIProtocol) {
+        self.authAPI = authAPI
+        
+        login.throttle(1, scheduler: MainScheduler.instance)
+        .subscribe({ event in
+            guard let credential = event.element else { return }
+            self.loginUser(credential: credential)
+        }).addDisposableTo(DisposeBag())
+        
+        register.throttle(1, scheduler: MainScheduler.instance)
+        .subscribe({ event in
+            guard let form = event.element else { return }
+            self.registerUser(form: form)
+        }).addDisposableTo(DisposeBag())
     }
     
-    func loginUser(credential: LoginCredential){
-        loginAPI.loginUser(credential: credential).then{ uid -> Void in
-            
+    private func loginUser(credential: LoginCredential){
+        authAPI.loginUser(credential: credential).then{ uid -> Void in
+            self.loginResult.onNext(uid)
         }.catch{ error in
-            
+            self.loginResult.onError(error)
         }
     }
     
-    func registerUser(form: RegistrationForm){
-        loginAPI.registerUser(form: form).then{ uid -> Void in
-            
+    private func registerUser(form: RegistrationForm){
+        authAPI.registerUser(form: form).then{ uid -> Void in
+            self.registerResult.onNext(uid)
         }.catch{ error in
-                
+            self.registerResult.onError(error)
         }
     }
 }

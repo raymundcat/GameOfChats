@@ -11,12 +11,44 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
-protocol LoginAPIProtocol {
+protocol AuthAPIProtocol {
+    func getCurrentUser() -> Promise<User>
     func loginUser(credential: LoginCredential) -> Promise<String>
     func registerUser(form: RegistrationForm) -> Promise<String>
+    func logout() -> Promise<()>
 }
 
-class LoginAPI: LoginAPIProtocol {
+enum AuthError: Error{
+    case noCurrentUser
+}
+
+class AuthAPI: AuthAPIProtocol {
+    
+    func getCurrentUser() -> Promise<User>{
+        return Promise{ fulfill, reject in
+            if FIRAuth.auth()?.currentUser?.uid == nil {
+                reject(AuthError.noCurrentUser)
+            }else{
+                guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+                FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                    guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+                    fulfill(user)
+                })
+            }
+        }
+    }
+    
+    func logout() -> Promise<()> {
+        return Promise{ fulfill, reject in
+            do {
+                try FIRAuth.auth()?.signOut()
+                fulfill()
+            } catch let error {
+                reject(error)
+            }
+        }
+    }
     
     func loginUser(credential: LoginCredential) -> Promise<String> {
         return Promise{ fulfill, reject in
