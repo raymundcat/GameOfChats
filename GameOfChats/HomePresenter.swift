@@ -82,13 +82,11 @@ class HomePresenter: HomeInput, HomeOutput{
     }
     
     private func handleObserveMessages(ofUser uid: String){
-        messagesAPI.observeMessages(ofUser: uid).then{ message -> Void in
+        messagesAPI.observeMessages(ofUser: uid, onReceive: { message in
             guard let currentUser = self.currentUser.value else { return }
             guard let partnerID = message.getChatPartner(ofUser: currentUser.id) else { return }
             self.messagesDict.value[partnerID] = message
-        }.catch { (error) in
-            //handle error
-        }
+        })
     }
     
     private func handleViewDidLoad(){

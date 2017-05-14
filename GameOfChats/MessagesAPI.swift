@@ -14,29 +14,23 @@ enum MessagesError: Error{
 }
 
 protocol MessageAPIProtocol {
-    func observeMessages(ofUser uid: String) -> Promise<ChatMessage>
+    func observeMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
 }
 
 class MessagesAPI: MessageAPIProtocol{
     
-    func observeMessages(ofUser uid: String) -> Promise<ChatMessage> {
-        return Promise { fulfill, reject in
-            let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
-            let messagesRef = FIRDatabase.database().reference().child("messages")
+    func observeMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void){
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        let messagesRef = FIRDatabase.database().reference().child("messages")
             
-            userMessagesRef.child(uid).observe(.childAdded, with: { (snapshot) in
-                userMessagesRef.child(uid).child(snapshot.key).queryLimited(toLast: 1).observe(.childAdded, with: { (snapshot) in
-                    messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
-                        guard let dict = snapshot.value as? [String : AnyObject] else {
-                            reject(MessagesError.failedToParseData)
-                            return }
-                        guard let message = ChatMessage.from(dict: dict) else {
-                            reject(MessagesError.failedToParseData)
-                            return }
-                        fulfill(message)
-                    }, withCancel: nil)
+        userMessagesRef.child(uid).observe(.childAdded, with: { (snapshot) in
+            userMessagesRef.child(uid).child(snapshot.key).queryLimited(toLast: 1).observe(.childAdded, with: { (snapshot) in
+                messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
+                    guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                    guard let message = ChatMessage.from(dict: dict) else { return }
+                    onReceive(message)
                 }, withCancel: nil)
             }, withCancel: nil)
-        }
+        }, withCancel: nil)
     }
 }
