@@ -21,6 +21,8 @@ protocol LoginOutput {
 
 class LoginPresenter: LoginInput, LoginOutput{
     
+    let disposeBag = DisposeBag()
+    
     let loginResult = PublishSubject<String>()
     let registerResult = PublishSubject<String>()
     
@@ -36,13 +38,13 @@ class LoginPresenter: LoginInput, LoginOutput{
         .subscribe({ event in
             guard let credential = event.element else { return }
             self.loginUser(credential: credential)
-        }).addDisposableTo(DisposeBag())
+        }).addDisposableTo(disposeBag)
         
         register.throttle(1, scheduler: MainScheduler.instance)
         .subscribe({ event in
             guard let form = event.element else { return }
             self.registerUser(form: form)
-        }).addDisposableTo(DisposeBag())
+        }).addDisposableTo(disposeBag)
     }
     
     private func loginUser(credential: LoginCredential){

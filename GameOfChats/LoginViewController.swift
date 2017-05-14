@@ -9,7 +9,7 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-
+    
     let inputsContainerView: UIView = {
         let inputsContainerView = UIView()
         inputsContainerView.backgroundColor = .white

@@ -332,8 +332,8 @@
 		ECBA099A1EC7328600ACDAF1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */,
 				ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */,
+				ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */,
 				ECBA09A21EC77BF800ACDAF1 /* LoginCoordinator.swift */,
 			);
 			name = Models;

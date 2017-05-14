@@ -42,35 +42,37 @@ class HomePresenter: HomeInput, HomeOutput{
     
     var messagesDict = [String : ChatMessage]()
     
+    let disposeBag = DisposeBag()
+    
     init(authAPI : AuthAPIProtocol, messagesAPI: MessageAPIProtocol) {
-        
         self.authAPI = authAPI
         self.messagesAPI = messagesAPI
         
         viewDidLoad.subscribe { _ in
             self.handleViewDidLoad()
-        }.disposed(by: DisposeBag())
+        }.addDisposableTo(disposeBag)
         
         logOut.subscribe({ _ in
             self.handleLogout()
-        }).addDisposableTo(DisposeBag())
+        }).addDisposableTo(disposeBag)
         
-        openMessages.subscribe({ event in
+        openMessages
+            .subscribe({ event in
             guard let message = event.element else { return }
             guard let userID = self.currentUser.value?.id else { return }
             guard let partnerID = message.getChatPartner(ofUser: userID) else { return }
             self.shouldOpenMessagesForUser.onNext(partnerID)
-        }).addDisposableTo(DisposeBag())
+        }).addDisposableTo(disposeBag)
         
         openUsers.subscribe({ _ in
             self.shouldOpenUsers.onNext(true)
-        }).addDisposableTo(DisposeBag())
+        }).addDisposableTo(disposeBag)
         
         currentUser.asObservable()
         .subscribe { (event) in
             guard let element = event.element, let user = element else { return }
             self.handleObserveMessages(ofUser: user.id)
-        }.addDisposableTo(DisposeBag())
+        }.addDisposableTo(disposeBag)
     }
     
     private func handleObserveMessages(ofUser uid: String){

@@ -11,7 +11,10 @@ import RxSwift
 
 class HomeViewController: UITableViewController {
     
+    let disposeBag = DisposeBag()
+    
     var homeInput: HomeInput?
+    
     var homeOutput: HomeOutput?{
         didSet{
             homeOutput?.currentMessages.asObservable()
@@ -20,7 +23,7 @@ class HomeViewController: UITableViewController {
                 guard let messages = event.element else { return }
                 self.messages = messages
                 self.tableView.reloadData()
-            }).addDisposableTo(DisposeBag())
+            }).addDisposableTo(disposeBag)
         }
     }
     

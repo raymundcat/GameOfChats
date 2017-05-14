@@ -11,6 +11,8 @@ import RxSwift
 
 class LoginFlow: FlowController{
     
+    let disposeBag = DisposeBag()
+    
     let config: FlowConfig
     let viewController: LoginViewController
     let presenter: LoginPresenter
@@ -21,13 +23,12 @@ class LoginFlow: FlowController{
         presenter = LoginPresenter(authAPI: AuthAPI())
         
         viewController.loginInput = presenter
-        presenter.loginResult.subscribe({ [weak self] _ in
-            guard let `self` = self else { return }
-            self.config.navigationController?.dismiss(animated: true, completion: nil)
-        }).addDisposableTo(DisposeBag())
     }
     
     func start() {
-        config.navigationController?.pushViewController(viewController, animated: true)
+        presenter.loginResult.subscribe({ _ in
+            self.config.navigationController?.dismiss(animated: true, completion: nil)
+        }).addDisposableTo(disposeBag)
+        config.navigationController?.present(viewController, animated: true, completion: nil)
     }
 }
