@@ -82,7 +82,7 @@ class HomePresenter: HomeInput, HomeOutput{
     }
     
     private func handleObserveMessages(ofUser uid: String){
-        messagesAPI.observeMessages(ofUser: uid, onReceive: { message in
+        messagesAPI.observeLastMessages(ofUser: uid, onReceive: { message in
             guard let currentUser = self.currentUser.value else { return }
             guard let partnerID = message.getChatPartner(ofUser: currentUser.id) else { return }
             self.messagesDict.value[partnerID] = message

@@ -9,17 +9,20 @@
 import UIKit
 import RxSwift
 
-class HomeFlow: FlowController {
+class HomeFlowController: FlowController {
     
-    let config: FlowConfig
+    private let disposeBag = DisposeBag()
+    private let config: FlowConfig
     private let viewController: HomeViewController
     private let presenter: HomePresenter
-    private var loginFlow: LoginFlow?
+    
+    private var loginFlowController: LoginFlowController?
+    private var chatlogFlowController: ChatlogFlowController?
+    
     private lazy var titleView: TitleView = {
         let view = TitleView()
         return view
     }()
-    private let disposeBag = DisposeBag()
     
     required init(config: FlowConfig) {
         self.config = config
@@ -32,10 +35,12 @@ class HomeFlow: FlowController {
     
     func start() {
         let loginConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
-        loginFlow = LoginFlow(config: loginConfig)
-        loginFlow?.loginResult.subscribe({ _ in
+        loginFlowController = LoginFlowController(config: loginConfig)
+        loginFlowController?.loginResult.subscribe({ _ in
             self.presenter.viewDidLoad.onNext(true)
         }).addDisposableTo(disposeBag)
+        
+        let chatlogConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
         
         viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
@@ -56,15 +61,20 @@ class HomeFlow: FlowController {
             //open users/messages flow
         }.addDisposableTo(disposeBag)
         
-        presenter.shouldOpenMessagesForUser.subscribe { (_) in
-            //open user chat
+        presenter.shouldOpenMessagesForUser
+            .throttle(0.5, scheduler: MainScheduler.instance)
+            .subscribe { (event) in
+                guard let currentUID = self.presenter.currentUser.value?.id else { return }
+                guard let partnerUID = event.element else { return }
+                self.chatlogFlowController = ChatlogFlowController(config: chatlogConfig, partnerUsers: (currentUID, partnerUID))
+                self.chatlogFlowController?.start()
         }.addDisposableTo(disposeBag)
         
         config.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showLogin(){
-        loginFlow?.start()
+        loginFlowController?.start()
     }
     
     @objc func handleLogout(){

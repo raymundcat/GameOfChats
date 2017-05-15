@@ -13,11 +13,11 @@ protocol LoginFlowOutput {
     var loginResult: PublishSubject<String> { get }
 }
 
-class LoginFlow: FlowController, LoginFlowOutput{
+class LoginFlowController: FlowController, LoginFlowOutput{
     
     private let disposeBag = DisposeBag()
     
-    let config: FlowConfig
+    private let config: FlowConfig
     private let viewController: LoginViewController
     private let presenter: LoginPresenter
     let loginResult = PublishSubject<String>()

@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class InitialFlow: FlowController{
+class InitialFlowController: FlowController{
     
     let config: FlowConfig
     required init(config: FlowConfig) {
@@ -21,8 +21,8 @@ class InitialFlow: FlowController{
         config.window?.rootViewController = navigationController
         
         let homeConfig = FlowConfig(window: config.window, navigationController: navigationController, parent: self)
-        let homeFlow = HomeFlow(config: homeConfig)
-        homeFlow.start()
+        let homeFlowController = HomeFlowController(config: homeConfig)
+        homeFlowController.start()
     }
 }
 
@@ -40,8 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         let initialConfig = FlowConfig(window: window, navigationController: nil, parent: nil)
-        let initialFlow = InitialFlow(config: initialConfig)
-        initialFlow.start()
+        let initialFlowController = InitialFlowController(config: initialConfig)
+        initialFlowController.start()
         
         return true
     }

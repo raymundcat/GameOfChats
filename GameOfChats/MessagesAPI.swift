@@ -14,12 +14,13 @@ enum MessagesError: Error{
 }
 
 protocol MessageAPIProtocol {
-    func observeMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
+    func observeLastMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
+    func observeMessages(ofUser currentUID: String, withPartner partnerUID: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
 }
 
 class MessagesAPI: MessageAPIProtocol{
     
-    func observeMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void){
+    func observeLastMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void){
         let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
         let messagesRef = FIRDatabase.database().reference().child("messages")
             
@@ -30,6 +31,21 @@ class MessagesAPI: MessageAPIProtocol{
                     guard let message = ChatMessage.from(dict: dict) else { return }
                     onReceive(message)
                 }, withCancel: nil)
+            }, withCancel: nil)
+        }, withCancel: nil)
+    }
+    
+    func observeMessages(ofUser currentUID: String, withPartner partnerUID: String, onReceive: @escaping (_ message: ChatMessage) -> Void){
+        guard !currentUID.isEmpty, !partnerUID.isEmpty else { return }
+        
+        let messagesRef = FIRDatabase.database().reference().child("messages")
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        
+        userMessagesRef.child(currentUID).child(partnerUID).observe(.childAdded, with: { (snapshot) in
+            messagesRef.child(snapshot.key).observe(.value, with: { (snapshot) in
+                guard let dict = snapshot.value as? [String : AnyObject] else { return }
+                guard let message = ChatMessage.from(dict: dict) else { return }
+                onReceive(message)
             }, withCancel: nil)
         }, withCancel: nil)
     }

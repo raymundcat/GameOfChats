@@ -33,13 +33,15 @@
 		ECBA099C1EC7329C00ACDAF1 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */; };
 		ECBA099E1EC734B000ACDAF1 /* AuthAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */; };
 		ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA099F1EC735FB00ACDAF1 /* Result.swift */; };
-		ECBA09A31EC77BF800ACDAF1 /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */; };
+		ECBA09A31EC77BF800ACDAF1 /* LoginFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A21EC77BF800ACDAF1 /* LoginFlowController.swift */; };
 		ECBA09A51EC7812600ACDAF1 /* FlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A41EC7812600ACDAF1 /* FlowController.swift */; };
-		ECBA09A81EC7AEB600ACDAF1 /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A71EC7AEB600ACDAF1 /* HomeFlow.swift */; };
+		ECBA09A81EC7AEB600ACDAF1 /* HomeFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A71EC7AEB600ACDAF1 /* HomeFlowController.swift */; };
 		ECBA09AA1EC7B02D00ACDAF1 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */; };
 		ECBA09AC1EC86D2900ACDAF1 /* MessagesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */; };
+		ECBA09AF1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09AE1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift */; };
+		ECBA09B11EC9FFD900ACDAF1 /* ChatlogFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */; };
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
-		ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */; };
+		ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -99,14 +101,16 @@
 		ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
 		ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthAPI.swift; sourceTree = "<group>"; };
 		ECBA099F1EC735FB00ACDAF1 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginFlow.swift; sourceTree = "<group>"; };
+		ECBA09A21EC77BF800ACDAF1 /* LoginFlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginFlowController.swift; sourceTree = "<group>"; };
 		ECBA09A41EC7812600ACDAF1 /* FlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlowController.swift; sourceTree = "<group>"; };
-		ECBA09A71EC7AEB600ACDAF1 /* HomeFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
+		ECBA09A71EC7AEB600ACDAF1 /* HomeFlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeFlowController.swift; sourceTree = "<group>"; };
 		ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
 		ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesAPI.swift; sourceTree = "<group>"; };
+		ECBA09AE1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogPresenter.swift; sourceTree = "<group>"; };
+		ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogFlowController.swift; sourceTree = "<group>"; };
 		ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfChats-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
-		ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogViewController.swift; sourceTree = "<group>"; };
+		ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogViewController.swift; sourceTree = "<group>"; };
 		ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -315,6 +319,7 @@
 		ECBA09891EBA6C0400ACDAF1 /* ChatLogs */ = {
 			isa = PBXGroup;
 			children = (
+				ECBA09AD1EC9FFA900ACDAF1 /* Models */,
 				ECBA098A1EBA6C1000ACDAF1 /* Views */,
 			);
 			name = ChatLogs;
@@ -323,7 +328,7 @@
 		ECBA098A1EBA6C1000ACDAF1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				ECDBCCC41EB7507000B17297 /* ChatLogViewController.swift */,
+				ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */,
 				ECBA098D1EBBB6E100ACDAF1 /* ChatMessageCell.swift */,
 			);
 			name = Views;
@@ -334,7 +339,7 @@
 			children = (
 				ECBA099D1EC734B000ACDAF1 /* AuthAPI.swift */,
 				ECBA099B1EC7329C00ACDAF1 /* LoginPresenter.swift */,
-				ECBA09A21EC77BF800ACDAF1 /* LoginFlow.swift */,
+				ECBA09A21EC77BF800ACDAF1 /* LoginFlowController.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -342,9 +347,18 @@
 		ECBA09A61EC7AEA700ACDAF1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				ECBA09A71EC7AEB600ACDAF1 /* HomeFlow.swift */,
+				ECBA09A71EC7AEB600ACDAF1 /* HomeFlowController.swift */,
 				ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */,
 				ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		ECBA09AD1EC9FFA900ACDAF1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */,
+				ECBA09AE1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -645,9 +659,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECBA09A81EC7AEB600ACDAF1 /* HomeFlow.swift in Sources */,
+				ECBA09A81EC7AEB600ACDAF1 /* HomeFlowController.swift in Sources */,
 				ECBA098C1EBBADAE00ACDAF1 /* Date+Formatters.swift in Sources */,
 				ECBA09801EB7C58F00ACDAF1 /* UserMessageCell.swift in Sources */,
+				ECBA09AF1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift in Sources */,
 				ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */,
 				ECBA09A51EC7812600ACDAF1 /* FlowController.swift in Sources */,
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
@@ -655,10 +670,11 @@
 				EC30E9E91EAD372E005E2E81 /* LoginViewController.swift in Sources */,
 				ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */,
 				ECBA09821EB7C5FC00ACDAF1 /* Errors.swift in Sources */,
+				ECBA09B11EC9FFD900ACDAF1 /* ChatlogFlowController.swift in Sources */,
 				EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */,
-				ECBA09A31EC77BF800ACDAF1 /* LoginFlow.swift in Sources */,
+				ECBA09A31EC77BF800ACDAF1 /* LoginFlowController.swift in Sources */,
 				ECBA099E1EC734B000ACDAF1 /* AuthAPI.swift in Sources */,
-				ECDBCCC51EB7507000B17297 /* ChatLogViewController.swift in Sources */,
+				ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */,
 				ECBA09861EB7C69300ACDAF1 /* ChatMessage.swift in Sources */,
 				ECBA09AA1EC7B02D00ACDAF1 /* HomePresenter.swift in Sources */,
 				ECBA09881EB7C6C000ACDAF1 /* UserCell.swift in Sources */,
