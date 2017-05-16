@@ -9,7 +9,6 @@
 import UIKit
 
 extension UIImageView{
-    
     func loadCachedImage(fromURL url: URL, withPlaceHolder placeHolder: UIImage?) {
         ImageCache.shared.image(for: url) { (result) in
             switch result{
@@ -29,13 +28,9 @@ enum ImageCacheError: Error{
 }
 
 class ImageCache {
-    
     static let shared = ImageCache()
-    
     private let cache = NSCache<NSString, UIImage>()
-    
     private init() { }
-    
     func image(for url: URL, completionHandler: @escaping (_ result: Result<UIImage>) -> Void) {
         DispatchQueue.main.async {
             if let cachedImage = self.cache.object(forKey: url.absoluteString as NSString)  {

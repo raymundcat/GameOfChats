@@ -85,7 +85,7 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         input?.viewDidLoad.onNext(true)
     }
     
-    var messages = [ChatMessage]()
+    var messages = [ChatMessageViewModel]()
     
     func setupInputComponents(){
         containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
@@ -179,11 +179,7 @@ extension ChatLogViewController{
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.row]
-//        guard let currentUserID = FIRAuth.auth()?.currentUser?.uid,
-//            let partnerID = message.getChatPartner(ofUser: currentUserID) else { return cell }
-//        
-//        let messageType: MessageCellType = message.fromID == partnerID ? .partnerUser : .currentUser
-        cell.layoutCell(withMessage: message, type: .currentUser)
+        cell.layoutCell(withMessage: message)
         return cell
     }
     

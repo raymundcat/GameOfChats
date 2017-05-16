@@ -9,6 +9,12 @@
 import Foundation
 import RxSwift
 
+struct ChatMessageViewModel {
+    let text: String
+    let userImage: UIImage?
+    let type: MessageCellType
+}
+
 protocol ChatlogInput {
     var viewDidLoad: PublishSubject<Bool> { get }
     var sendMessage: PublishSubject<Bool> { get }
@@ -17,7 +23,7 @@ protocol ChatlogInput {
 
 protocol ChatlogOutput {
     var partnerUser: Variable<User?> { get }
-    var currentMessages: Variable<[ChatMessage]> { get }
+    var currentMessages: Variable<[ChatMessageViewModel]> { get }
     var shouldClose: PublishSubject<Bool> { get }
 }
 
@@ -28,7 +34,7 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
     let messageText = Variable<String?>("")
     
     let partnerUser = Variable<User?>(nil)
-    let currentMessages = Variable<[ChatMessage]>([])
+    let currentMessages = Variable<[ChatMessageViewModel]>([])
     let shouldClose = PublishSubject<Bool>()
     
     private let messagesAPI: MessagesAPI
@@ -44,7 +50,10 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
         
         viewDidLoad.subscribe { (event) in
             self.messagesAPI.observeMessages(ofUser: self.currentUID, withPartner: self.partnerUID, onReceive: { (message) in
-                self.currentMessages.value.append(message)
+                self.currentMessages.value
+                    .append(ChatMessageViewModel(text: message.text,
+                                                 userImage: nil,
+                                                 type: message.fromID == self.currentUID ? .currentUser : .partnerUser))
             })
         }.addDisposableTo(disposeBag)
         
