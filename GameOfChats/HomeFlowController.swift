@@ -24,7 +24,7 @@ class HomeFlowController: FlowController {
         return view
     }()
     
-    required init(config: FlowConfig) {
+    init(config: FlowConfig) {
         self.config = config
         presenter = HomePresenter(authAPI: AuthAPI(), messagesAPI: MessagesAPI())
         

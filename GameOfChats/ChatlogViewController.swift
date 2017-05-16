@@ -7,11 +7,9 @@
 //
 
 import UIKit
-import FirebaseDatabase
-import FirebaseAuth
-import FirebaseStorage
 import Anchorage
 import RxSwift
+import RxCocoa
 
 class ChatLogViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
@@ -42,6 +40,7 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     lazy var sendButton: UIButton = {
         let sendButton = UIButton(type: .system)
         sendButton.setTitle("Send", for: .normal)
+        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         return sendButton
     }()
@@ -54,7 +53,15 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     }()
     
     private let disposeBag = DisposeBag()
-    var input: ChatlogInput?
+    var input: ChatlogInput?{
+        didSet{
+            guard let input = input else { return }
+            inputTextField.rx.text.asObservable()
+                .bind(to: input.messageText)
+                .addDisposableTo(disposeBag)
+        }
+    }
+    
     var output: ChatlogOutput?{
         didSet{
             output?.currentMessages.asObservable()
@@ -109,29 +116,9 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
         separatorView.heightAnchor == 0.5
     }
     
-//    func handleSend(){
-//        guard let text = inputTextField.text else { return }
-//        guard let currentUser = FIRAuth.auth()?.currentUser else { return }
-//        
-//        let messagesRef = FIRDatabase.database().reference().child("messages")
-//        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
-//        let newMessageRef = messagesRef.childByAutoId()
-//        
-//        let toID = partnerUser.id
-//        let fromID = currentUser.uid
-//        let timestamp = Int(NSDate().timeIntervalSince1970)
-//        let message = ChatMessage(text: text,
-//                                  toID: toID,
-//                                  fromID: fromID,
-//                                  timestamp: timestamp)
-//        newMessageRef.setValue(message.getValue()) { (error, ref) in
-//            guard error == nil else { return }
-//            userMessagesRef.child(message.fromID).child(toID).updateChildValues([ref.key : 1])
-//            userMessagesRef.child(message.toID).child(fromID).updateChildValues([ref.key : 1])
-//        }
-//        
-//        inputTextField.text = nil
-//    }
+    func handleSend(){
+        input?.sendMessage.onNext(true)
+    }
     
     func handlePickImage(){
         let picker = UIImagePickerController()
@@ -141,14 +128,14 @@ class ChatLogViewController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func uploadImage(image: UIImage){
-        let randName = UUID().uuidString
-        let ref = FIRStorage.storage().reference().child("message_images").child(randName)
-        guard let jpegImage = UIImageJPEGRepresentation(image, 0.3) else { return }
-        ref.put(jpegImage, metadata: nil) { (metaData, error) in
-            if error != nil{
-                return
-            }
-        }
+//        let randName = UUID().uuidString
+//        let ref = FIRStorage.storage().reference().child("message_images").child(randName)
+//        guard let jpegImage = UIImageJPEGRepresentation(image, 0.3) else { return }
+//        ref.put(jpegImage, metadata: nil) { (metaData, error) in
+//            if error != nil{
+//                return
+//            }
+//        }
     }
 }
 
@@ -192,11 +179,11 @@ extension ChatLogViewController{
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
         let message = messages[indexPath.row]
-        guard let currentUserID = FIRAuth.auth()?.currentUser?.uid,
-            let partnerID = message.getChatPartner(ofUser: currentUserID) else { return cell }
-        
-        let messageType: MessageCellType = message.fromID == partnerID ? .partnerUser : .currentUser
-        cell.layoutCell(withMessage: message, type: messageType)
+//        guard let currentUserID = FIRAuth.auth()?.currentUser?.uid,
+//            let partnerID = message.getChatPartner(ofUser: currentUserID) else { return cell }
+//        
+//        let messageType: MessageCellType = message.fromID == partnerID ? .partnerUser : .currentUser
+        cell.layoutCell(withMessage: message, type: .currentUser)
         return cell
     }
     
@@ -226,6 +213,7 @@ extension ChatLogViewController{
 
 extension ChatLogViewController: UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        input?.sendMessage.onNext(true)
         return true
     }
 }

@@ -13,7 +13,12 @@ enum FlowType {
     case navigation
 }
 
+protocol FlowBundle {
+    var config: FlowConfig { get }
+}
+
 struct FlowConfig {
+    
     let window: UIWindow?
     let navigationController: UINavigationController?
     let parent: FlowController?
@@ -26,6 +31,5 @@ struct FlowConfig {
 }
 
 protocol FlowController {
-    init(config : FlowConfig)
     func start()
 }

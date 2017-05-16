@@ -22,7 +22,7 @@ class LoginFlowController: FlowController, LoginFlowOutput{
     private let presenter: LoginPresenter
     let loginResult = PublishSubject<String>()
     
-    required init(config: FlowConfig) {
+    init(config: FlowConfig) {
         self.config = config
         presenter = LoginPresenter(authAPI: AuthAPI())
         viewController = LoginViewController()

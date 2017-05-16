@@ -14,35 +14,22 @@ typealias PartnerUsers = (String, String)
 class ChatlogFlowController: FlowController {
     
     private let disposeBag = DisposeBag()
-    private var viewController: ChatLogViewController?
-    private var presenter: ChatlogPresenter?
+    private var viewController: ChatLogViewController
+    private var presenter: ChatlogPresenter
     private let config: FlowConfig
-    private var partners: PartnerUsers = ("", "")
     
-    required init(config: FlowConfig) {
+    init(config: FlowConfig, partnerUsers: PartnerUsers){
         self.config = config
-        self.setup()
-    }
-    
-    convenience init(config: FlowConfig, partnerUsers: PartnerUsers){
-        self.init(config: config)
-        self.partners = partnerUsers
-        self.setup()
-    }
-    
-    func setup(){
-        presenter = ChatlogPresenter(users: partners, messagesAPI: MessagesAPI())
-        
+        presenter = ChatlogPresenter(users: partnerUsers, messagesAPI: MessagesAPI())
         viewController = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        viewController?.input = presenter
-        viewController?.output = presenter
+        viewController.input = presenter
+        viewController.output = presenter
     }
     
     func start() {
-        presenter?.shouldClose.subscribe { (_) in
+        presenter.shouldClose.subscribe { (_) in
             self.config.navigationController?.popViewController(animated: true)
         }.addDisposableTo(disposeBag)
-        
-        config.navigationController?.pushViewController(viewController!, animated: true)
+        config.navigationController?.pushViewController(viewController, animated: true)
     }
 }

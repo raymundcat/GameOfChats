@@ -49,4 +49,16 @@ class MessagesAPI: MessageAPIProtocol{
             }, withCancel: nil)
         }, withCancel: nil)
     }
+    
+    func send(message: ChatMessage){
+        let messagesRef = FIRDatabase.database().reference().child("messages")
+        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
+        let newMessageRef = messagesRef.childByAutoId()
+        
+        newMessageRef.setValue(message.getValue()) { (error, ref) in
+            guard error == nil else { return }
+            userMessagesRef.child(message.fromID).child(message.toID).updateChildValues([ref.key : 1])
+            userMessagesRef.child(message.toID).child(message.fromID).updateChildValues([ref.key : 1])
+        }
+    }
 }

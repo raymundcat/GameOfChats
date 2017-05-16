@@ -11,8 +11,8 @@ import Firebase
 
 class InitialFlowController: FlowController{
     
-    let config: FlowConfig
-    required init(config: FlowConfig) {
+    private let config: FlowConfig
+    init(config: FlowConfig) {
         self.config = config
     }
     
