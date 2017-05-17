@@ -18,6 +18,7 @@ class HomeFlowController: FlowController {
     
     private var loginFlowController: LoginFlowController?
     private var chatlogFlowController: ChatlogFlowController?
+    private var newMessageFlowController: NewMessageFlowController?
     
     private lazy var titleView: TitleView = {
         let view = TitleView()
@@ -34,13 +35,28 @@ class HomeFlowController: FlowController {
     }
     
     func start() {
-        let loginConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
+        let loginConfig = FlowConfig(window: config.window,
+                                     navigationController: config.navigationController,
+                                     parent: self)
         loginFlowController = LoginFlowController(config: loginConfig)
         loginFlowController?.loginResult.subscribe({ _ in
             self.presenter.viewDidLoad.onNext(())
         }).addDisposableTo(disposeBag)
         
-        let chatlogConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
+        let newMessageConfig = FlowConfig(window: config.window,
+                                          navigationController: config.navigationController,
+                                          parent: self)
+        newMessageFlowController = NewMessageFlowController(config: newMessageConfig)
+        newMessageFlowController?.didSelectUser.subscribe({ (event) in
+            self.newMessageFlowController?.dismiss()
+            guard let currentUID = self.presenter.currentUser.value?.id else { return }
+            guard let partnerUID = event.element else { return }
+            let chatlogConfig = FlowConfig(window: self.config.window,
+                                           navigationController: self.config.navigationController,
+                                           parent: self)
+            self.chatlogFlowController = ChatlogFlowController(config: chatlogConfig, partnerUsers: (currentUID, partnerUID))
+            self.chatlogFlowController?.start()
+        }).addDisposableTo(disposeBag)
         
         viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
@@ -58,7 +74,7 @@ class HomeFlowController: FlowController {
         }.addDisposableTo(disposeBag)
         
         presenter.shouldOpenUsers.subscribe { (_) in
-            //open users/messages flow
+            self.newMessageFlowController?.start()
         }.addDisposableTo(disposeBag)
         
         presenter.shouldOpenMessagesForUser
@@ -66,6 +82,9 @@ class HomeFlowController: FlowController {
             .subscribe { (event) in
                 guard let currentUID = self.presenter.currentUser.value?.id else { return }
                 guard let partnerUID = event.element else { return }
+                let chatlogConfig = FlowConfig(window: self.config.window,
+                                               navigationController: self.config.navigationController,
+                                               parent: self)
                 self.chatlogFlowController = ChatlogFlowController(config: chatlogConfig, partnerUsers: (currentUID, partnerUID))
                 self.chatlogFlowController?.start()
         }.addDisposableTo(disposeBag)

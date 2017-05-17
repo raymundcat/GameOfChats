@@ -43,6 +43,9 @@
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
 		ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */; };
 		ECE99A6A1ECCA6BB004189DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A691ECCA6BB004189DE /* BaseViewController.swift */; };
+		ECE99A6D1ECCD0A0004189DE /* NewMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */; };
+		ECE99A6F1ECCD0B8004189DE /* NewMessageFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */; };
+		ECE99A711ECCD467004189DE /* UsersAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A701ECCD467004189DE /* UsersAPI.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +116,9 @@
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogViewController.swift; sourceTree = "<group>"; };
 		ECE99A691ECCA6BB004189DE /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessagePresenter.swift; sourceTree = "<group>"; };
+		ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageFlowController.swift; sourceTree = "<group>"; };
+		ECE99A701ECCD467004189DE /* UsersAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersAPI.swift; sourceTree = "<group>"; };
 		ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -305,6 +311,7 @@
 		EC741C781EB4B77200B5D0B1 /* New Message */ = {
 			isa = PBXGroup;
 			children = (
+				ECE99A6B1ECCD08B004189DE /* Models */,
 				EC741C791EB4B77A00B5D0B1 /* Views */,
 			);
 			name = "New Message";
@@ -352,7 +359,6 @@
 			children = (
 				ECBA09A71EC7AEB600ACDAF1 /* HomeFlowController.swift */,
 				ECBA09A91EC7B02D00ACDAF1 /* HomePresenter.swift */,
-				ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -362,6 +368,7 @@
 			children = (
 				ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */,
 				ECBA09AE1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift */,
+				ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -374,6 +381,16 @@
 				ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		ECE99A6B1ECCD08B004189DE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */,
+				ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */,
+				ECE99A701ECCD467004189DE /* UsersAPI.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -668,6 +685,7 @@
 				ECBA09AF1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift in Sources */,
 				ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */,
 				ECE99A6A1ECCA6BB004189DE /* BaseViewController.swift in Sources */,
+				ECE99A6F1ECCD0B8004189DE /* NewMessageFlowController.swift in Sources */,
 				ECBA09A51EC7812600ACDAF1 /* FlowController.swift in Sources */,
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,
@@ -680,10 +698,12 @@
 				ECBA099E1EC734B000ACDAF1 /* AuthAPI.swift in Sources */,
 				ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */,
 				ECBA09861EB7C69300ACDAF1 /* ChatMessage.swift in Sources */,
+				ECE99A6D1ECCD0A0004189DE /* NewMessagePresenter.swift in Sources */,
 				ECBA09AA1EC7B02D00ACDAF1 /* HomePresenter.swift in Sources */,
 				ECBA09881EB7C6C000ACDAF1 /* UserCell.swift in Sources */,
 				EC30E9B71EAD3253005E2E81 /* AppDelegate.swift in Sources */,
 				ECBA099C1EC7329C00ACDAF1 /* LoginPresenter.swift in Sources */,
+				ECE99A711ECCD467004189DE /* UsersAPI.swift in Sources */,
 				EC741C771EB4B6FD00B5D0B1 /* User.swift in Sources */,
 				ECBA09AC1EC86D2900ACDAF1 /* MessagesAPI.swift in Sources */,
 				ECBA097E1EB7C56600ACDAF1 /* TitleView.swift in Sources */,
