@@ -42,6 +42,7 @@
 		ECBA09B11EC9FFD900ACDAF1 /* ChatlogFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */; };
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
 		ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */; };
+		ECE99A6A1ECCA6BB004189DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A691ECCA6BB004189DE /* BaseViewController.swift */; };
 		ECF653A21EB3565800A43E9A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,7 @@
 		ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfChats-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogViewController.swift; sourceTree = "<group>"; };
+		ECE99A691ECCA6BB004189DE /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		ECF653A11EB3565800A43E9A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -295,6 +297,7 @@
 				ECBA09851EB7C69300ACDAF1 /* ChatMessage.swift */,
 				ECBA099F1EC735FB00ACDAF1 /* Result.swift */,
 				ECBA09A41EC7812600ACDAF1 /* FlowController.swift */,
+				ECE99A691ECCA6BB004189DE /* BaseViewController.swift */,
 			);
 			name = Entities;
 			sourceTree = "<group>";
@@ -664,6 +667,7 @@
 				ECBA09801EB7C58F00ACDAF1 /* UserMessageCell.swift in Sources */,
 				ECBA09AF1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift in Sources */,
 				ECBA098E1EBBB6E100ACDAF1 /* ChatMessageCell.swift in Sources */,
+				ECE99A6A1ECCA6BB004189DE /* BaseViewController.swift in Sources */,
 				ECBA09A51EC7812600ACDAF1 /* FlowController.swift in Sources */,
 				EC741C711EB3645900B5D0B1 /* Constants.swift in Sources */,
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,

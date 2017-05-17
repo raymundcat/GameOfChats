@@ -18,6 +18,7 @@ class InitialFlowController: FlowController{
     
     func start() {
         let navigationController = UINavigationController(rootViewController: UIViewController())
+        navigationController.view.backgroundColor = .white
         config.window?.rootViewController = navigationController
         
         let homeConfig = FlowConfig(window: config.window, navigationController: navigationController, parent: self)

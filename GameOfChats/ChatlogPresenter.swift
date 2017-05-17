@@ -16,8 +16,8 @@ struct ChatMessageViewModel {
 }
 
 protocol ChatlogInput {
-    var viewDidLoad: PublishSubject<Bool> { get }
-    var sendMessage: PublishSubject<Bool> { get }
+    var viewDidLoad: PublishSubject<()> { get }
+    var sendMessage: PublishSubject<()> { get }
     var messageText: Variable<String?> { get }
 }
 
@@ -29,8 +29,8 @@ protocol ChatlogOutput {
 
 class ChatlogPresenter: ChatlogInput, ChatlogOutput{
     
-    let viewDidLoad = PublishSubject<Bool>()
-    let sendMessage = PublishSubject<Bool>()
+    let viewDidLoad = PublishSubject<()>()
+    let sendMessage = PublishSubject<()>()
     let messageText = Variable<String?>("")
     
     let partnerUser = Variable<User?>(nil)

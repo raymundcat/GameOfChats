@@ -21,7 +21,7 @@ class ChatlogFlowController: FlowController {
     init(config: FlowConfig, partnerUsers: PartnerUsers){
         self.config = config
         presenter = ChatlogPresenter(users: partnerUsers, messagesAPI: MessagesAPI())
-        viewController = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        viewController = ChatLogViewController()
         viewController.input = presenter
         viewController.output = presenter
     }
