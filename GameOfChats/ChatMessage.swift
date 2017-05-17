@@ -41,3 +41,10 @@ struct ChatMessage {
         return nil
     }
 }
+
+extension Dictionary where Key == String, Value == ChatMessage{
+    func getSortedMessages() -> [ChatMessage] {
+        let array = Array(values)
+        return array.sorted{ $0.0.timestamp > $0.1.timestamp }
+    }
+}

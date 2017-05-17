@@ -8,9 +8,21 @@
 
 import Foundation
 
+struct RegistrationForm{
+    let name: String
+    let email: String
+    let password: String
+    let profileImage: UIImage
+}
+
 struct UserProfile{
     let name: String
     let email: String
     let password: String
     let profileImageURL: String
+}
+
+struct LoginCredential{
+    let email: String
+    let password: String
 }

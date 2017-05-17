@@ -8,63 +8,72 @@
 
 import UIKit
 import FirebaseDatabase
+import Anchorage
+import RxSwift
 
-protocol NewMessagesDelegate: class {
-    func newMessagesDidChoose(user: User)
-}
-
-class NewMessageViewController: UITableViewController{
-    
-    weak var delegate: NewMessagesDelegate?
+class NewMessageViewController: BaseViewController{
     
     var users: [User] = [User]()
     
-    let cellID = "cellID"
+    fileprivate let cellID = "cellID"
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UserCell.self, forCellReuseIdentifier: self.cellID)
+        return tableView
+    }()
+    
+    private let disposeBag = DisposeBag()
+    var input: NewMessageInput? {
+        didSet {
+            guard let input = input else { return }
+            rxViewDidLoad.bind(to: input.viewDidLoad)
+                .addDisposableTo(disposeBag)
+            tableView.rx.itemSelected.subscribe({ event in
+                guard let row = event.element?.row else { return }
+                input.didSelectUser.onNext(self.users[row].id)
+            }).addDisposableTo(disposeBag)
+        }
+    }
+    
+    var output: NewMessageOutput? {
+        didSet {
+            guard let output = output else { return }
+            output.users.asObservable().subscribe { (event) in
+                guard let users = event.element else { return }
+                self.users = users
+                self.tableView.reloadData()
+            }.addDisposableTo(disposeBag)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
-        fetchUsers()
-        
-        self.tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
+        setupTableView()
     }
     
-    func handleBack(){
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func fetchUsers(){
-        FIRDatabase.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
-            guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
-            self.users.append(user)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        })
+    func setupTableView(){
+        view.addSubview(tableView)
+        tableView.edgeAnchors == view.edgeAnchors
     }
 }
 
-extension NewMessageViewController{
+extension NewMessageViewController: UITableViewDelegate, UITableViewDataSource{
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 65.0
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? UserCell else {
             return UITableViewCell()
         }
         cell.user = users[indexPath.row]
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dismiss(animated: true, completion: {
-            self.delegate?.newMessagesDidChoose(user: self.users[indexPath.row])
-        })
     }
 }

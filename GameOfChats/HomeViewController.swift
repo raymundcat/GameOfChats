@@ -7,154 +7,73 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseDatabase
+import RxSwift
+import RxCocoa
+import Anchorage
 
-class HomeViewController: UITableViewController {
-
-    lazy var titleView: TitleView = {
-        let view = TitleView()
-        return view
-    }()
+class HomeViewController: BaseViewController {
     
-    func showChatLog(forUser user: User){
-        let vc = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        vc.partnerUser = user
-        navigationController?.pushViewController(vc, animated: true)
+    private let disposeBag = DisposeBag()
+    var homeInput: HomeInput?{
+        didSet{
+            guard let homeInput = homeInput else { return }
+            rxViewDidLoad.bind(to: homeInput.viewDidLoad)
+            .addDisposableTo(disposeBag)
+            
+            tableView.rx.itemSelected
+            .subscribe({ event in
+                guard let row = event.element?.row else { return }
+                homeInput.openMessages.onNext(self.messages[row])
+            }).addDisposableTo(disposeBag)
+        }
+    }
+    var homeOutput: HomeOutput?{
+        didSet{
+            homeOutput?.currentMessages.asObservable()
+            .throttle(1, scheduler: MainScheduler.instance)
+            .subscribe({ (event) in
+                guard let messages = event.element else { return }
+                self.messages = messages
+                self.tableView.reloadData()
+            }).addDisposableTo(disposeBag)
+        }
     }
     
-    let cellID = "cellID"
+    fileprivate let cellID = "cellID"
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UserMessageCell.self, forCellReuseIdentifier: self.cellID)
+        return tableView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellID)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(handleNewMessage))
-        
-        titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        navigationItem.titleView = titleView
-        
-        setUpNewUser()
+        setupTableView()
     }
     
-    func setUpNewUser(){
-        checkUserLoggedIn()
-        observeMessages()
+    func setupTableView(){
+        view.addSubview(tableView)
+        tableView.edgeAnchors == view.edgeAnchors
     }
     
-    func handleNewMessage(){
-        let newMessageVC = NewMessageViewController()
-        newMessageVC.delegate = self
-        let newNavController = UINavigationController(rootViewController: newMessageVC)
-        present(newNavController, animated: true, completion: nil)
-    }
-    
-    func checkUserLoggedIn(){
-        //check if user is logged in
-        if FIRAuth.auth()?.currentUser?.uid == nil {
-            perform(#selector(handleLogout), with: nil, afterDelay: 0.2)
-        }else{
-            guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-            FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
-                self.titleView.user = user
-            })
-        }
-    }
-    
-    lazy var loginViewController: LoginViewController = {
-        let loginVC = LoginViewController()
-        loginVC.delegate = self
-        return loginVC
-    }()
-    
-    func handleLogout(){
-        do {
-            try FIRAuth.auth()?.signOut()
-        } catch let error {
-            print("error \(error)")
-        }
-        present(loginViewController, animated: true, completion: nil)
-    }
-    
-    var messages: [ChatMessage] = [ChatMessage]()
-    var messagesDict = [String : ChatMessage]()
-    
-    func observeMessages(){
-        guard let user = FIRAuth.auth()?.currentUser else { return }
-        let userMessagesRef = FIRDatabase.database().reference().child("user-messages")
-        let messagesRef = FIRDatabase.database().reference().child("messages")
-        
-        userMessagesRef.child(user.uid).observe(.childAdded, with: { (snapshot) in
-            userMessagesRef.child(user.uid).child(snapshot.key).queryLimited(toLast: 1).observe(.childAdded, with: { (snapshot) in
-                messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
-                    guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                    guard let message = ChatMessage.from(dict: dict) else { return }
-                    guard let partnerID = message.getChatPartner(ofUser: user.uid) else { return }
-                    self.messagesDict[partnerID] = message
-                    self.handleReloadTable()
-                }, withCancel: nil)
-            }, withCancel: nil)
-        }, withCancel: nil)
-    }
-    
-    private var reloadTimer: Timer?
-    func handleReloadTable(){
-        reloadTimer?.invalidate()
-        reloadTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
-            DispatchQueue.main.async {
-                self.messages = self.messagesDict.getSortedMessages()
-                self.tableView.reloadData()
-            }
-        })
-    }
+    fileprivate var messages: [ChatMessage] = [ChatMessage]()
 }
 
-extension Dictionary where Key == String, Value == ChatMessage{
-    func getSortedMessages() -> [ChatMessage] {
-        let array = Array(values)
-        return array.sorted{ $0.0.timestamp > $0.1.timestamp }
-    }
-}
-
-extension HomeViewController{
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 65.0
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? UserMessageCell else { return UITableViewCell() }
         cell.message = messages[indexPath.row]
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let userID = FIRAuth.auth()?.currentUser?.uid else { return }
-        guard let partnerID = messages[indexPath.row].getChatPartner(ofUser: userID) else { return }
-        FIRDatabase.database().reference().child("users").child(partnerID).observeSingleEvent(of: .value, with: { (snapshot) in
-            guard let dict = snapshot.value as? [String : AnyObject] else { return }
-            guard let partnerUser = User.from(dict: dict, withID: snapshot.key) else { return }
-            self.showChatLog(forUser: partnerUser)
-        }, withCancel: nil)
-    }
-}
-
-extension HomeViewController: NewMessagesDelegate{
-    func newMessagesDidChoose(user: User) {
-        showChatLog(forUser: user)
-    }
-}
-
-extension HomeViewController: LoginViewContollerDelegate{
-    func loginViewControllerDidFinishLoginRegister() {
-        setUpNewUser()
-        loginViewController.dismiss(animated: true, completion: nil)
     }
 }

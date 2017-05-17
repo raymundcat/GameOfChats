@@ -9,6 +9,24 @@
 import UIKit
 import Firebase
 
+class InitialFlowController: FlowController{
+    
+    private let config: FlowConfig
+    init(config: FlowConfig) {
+        self.config = config
+    }
+    
+    func start() {
+        let navigationController = UINavigationController(rootViewController: UIViewController())
+        navigationController.view.backgroundColor = .white
+        config.window?.rootViewController = navigationController
+        
+        let homeConfig = FlowConfig(window: config.window, navigationController: navigationController, parent: self)
+        let homeFlowController = HomeFlowController(config: homeConfig)
+        homeFlowController.start()
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -21,7 +39,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
+        
+        let initialConfig = FlowConfig(window: window, navigationController: nil, parent: nil)
+        let initialFlowController = InitialFlowController(config: initialConfig)
+        initialFlowController.start()
         
         return true
     }
