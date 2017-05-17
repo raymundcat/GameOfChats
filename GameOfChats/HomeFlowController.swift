@@ -37,7 +37,7 @@ class HomeFlowController: FlowController {
         let loginConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
         loginFlowController = LoginFlowController(config: loginConfig)
         loginFlowController?.loginResult.subscribe({ _ in
-            self.presenter.viewDidLoad.onNext(true)
+            self.presenter.viewDidLoad.onNext(())
         }).addDisposableTo(disposeBag)
         
         let chatlogConfig = FlowConfig(window: config.window, navigationController: config.navigationController, parent: self)
@@ -78,10 +78,10 @@ class HomeFlowController: FlowController {
     }
     
     @objc func handleLogout(){
-        presenter.logOut.onNext(true)
+        presenter.logOut.onNext(())
     }
     
     @objc func handleNewMessage(){
-        presenter.openUsers.onNext(true)
+        presenter.openUsers.onNext(())
     }
 }

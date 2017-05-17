@@ -10,32 +10,32 @@ import Foundation
 import RxSwift
 
 protocol HomeInput {
-    var viewDidLoad: PublishSubject<Bool> { get }
+    var viewDidLoad: PublishSubject<()> { get }
     var openMessages: PublishSubject<ChatMessage> { get }
-    var openUsers: PublishSubject<Bool> { get }
-    var logOut: PublishSubject<Bool> { get }
+    var openUsers: PublishSubject<()> { get }
+    var logOut: PublishSubject<()> { get }
 }
 
 protocol HomeOutput {
     var currentMessages: Variable<[ChatMessage]> { get }
     var currentUser: Variable<User?> { get }
     var shouldOpenMessagesForUser: PublishSubject<String> { get }
-    var shouldOpenUsers: PublishSubject<Bool> { get }
-    var shouldLogOut: PublishSubject<Bool> { get }
+    var shouldOpenUsers: PublishSubject<()> { get }
+    var shouldLogOut: PublishSubject<()> { get }
 }
 
 class HomePresenter: HomeInput, HomeOutput{
     
-    let viewDidLoad = PublishSubject<Bool>()
+    let viewDidLoad = PublishSubject<()>()
     let openMessages = PublishSubject<ChatMessage>()
-    let openUsers = PublishSubject<Bool>()
-    let logOut = PublishSubject<Bool>()
+    let openUsers = PublishSubject<()>()
+    let logOut = PublishSubject<()>()
     
     let currentMessages = Variable<[ChatMessage]>([])
     let currentUser = Variable<User?>(nil)
     let shouldOpenMessagesForUser = PublishSubject<String>()
-    let shouldOpenUsers = PublishSubject<Bool>()
-    let shouldLogOut = PublishSubject<Bool>()
+    let shouldOpenUsers = PublishSubject<()>()
+    let shouldLogOut = PublishSubject<()>()
     
     private let authAPI : AuthAPIProtocol
     private let messagesAPI: MessageAPIProtocol
@@ -63,7 +63,7 @@ class HomePresenter: HomeInput, HomeOutput{
         }).addDisposableTo(disposeBag)
         
         openUsers.subscribe({ _ in
-            self.shouldOpenUsers.onNext(true)
+            self.shouldOpenUsers.onNext(())
         }).addDisposableTo(disposeBag)
         
         currentUser.asObservable()
@@ -100,7 +100,7 @@ class HomePresenter: HomeInput, HomeOutput{
     
     private func handleLogout(){
         authAPI.logout().then{ () -> Void in
-            self.shouldLogOut.onNext(true)
+            self.shouldLogOut.onNext(())
         }.catch { (error) in
             //handle error
         }

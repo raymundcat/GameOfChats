@@ -8,16 +8,30 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
+import Anchorage
 
-class HomeViewController: UITableViewController {
+class HomeViewController: BaseViewController {
     
     private let disposeBag = DisposeBag()
-    var homeInput: HomeInput?
+    var homeInput: HomeInput?{
+        didSet{
+            guard let homeInput = homeInput else { return }
+            rxViewDidLoad.bind(to: homeInput.viewDidLoad)
+            .addDisposableTo(disposeBag)
+            
+            tableView.rx.itemSelected
+            .subscribe({ event in
+                guard let row = event.element?.row else { return }
+                homeInput.openMessages.onNext(self.messages[row])
+            }).addDisposableTo(disposeBag)
+        }
+    }
     var homeOutput: HomeOutput?{
         didSet{
             homeOutput?.currentMessages.asObservable()
-                .throttle(1, scheduler: MainScheduler.instance)
-                .subscribe({ (event) in
+            .throttle(1, scheduler: MainScheduler.instance)
+            .subscribe({ (event) in
                 guard let messages = event.element else { return }
                 self.messages = messages
                 self.tableView.reloadData()
@@ -26,32 +40,40 @@ class HomeViewController: UITableViewController {
     }
     
     fileprivate let cellID = "cellID"
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UserMessageCell.self, forCellReuseIdentifier: self.cellID)
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UserMessageCell.self, forCellReuseIdentifier: cellID)
-        homeInput?.viewDidLoad.onNext(true)
+        setupTableView()
+    }
+    
+    func setupTableView(){
+        view.addSubview(tableView)
+        tableView.edgeAnchors == view.edgeAnchors
     }
     
     fileprivate var messages: [ChatMessage] = [ChatMessage]()
 }
 
-extension HomeViewController{
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 65.0
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? UserMessageCell else { return UITableViewCell() }
         cell.message = messages[indexPath.row]
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        homeInput?.openMessages.onNext(messages[indexPath.row])
     }
 }

@@ -24,7 +24,7 @@ protocol ChatlogInput {
 protocol ChatlogOutput {
     var partnerUser: Variable<User?> { get }
     var currentMessages: Variable<[ChatMessageViewModel]> { get }
-    var shouldClose: PublishSubject<Bool> { get }
+    var shouldClose: PublishSubject<()> { get }
 }
 
 class ChatlogPresenter: ChatlogInput, ChatlogOutput{
@@ -35,7 +35,7 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
     
     let partnerUser = Variable<User?>(nil)
     let currentMessages = Variable<[ChatMessageViewModel]>([])
-    let shouldClose = PublishSubject<Bool>()
+    let shouldClose = PublishSubject<()>()
     
     private let messagesAPI: MessagesAPI
     private let disposeBag = DisposeBag()
