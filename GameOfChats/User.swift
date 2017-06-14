@@ -8,11 +8,18 @@
 
 import Foundation
 
-struct User {
+class User {
     let id: String
     let name: String
     let email: String
     let imgURL: String?
+    
+    init(id: String, name: String, email: String, imgURL: String?) {
+        self.id = id
+        self.name = name
+        self.email = email
+        self.imgURL = imgURL
+    }
     
     static func from(dict: [String : AnyObject], withID id: String) -> User?{
         guard let name = dict["name"] as? String else { return nil }

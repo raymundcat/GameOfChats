@@ -20,7 +20,9 @@ class ChatlogFlowController: FlowController {
     
     init(config: FlowConfig, partnerUsers: PartnerUsers){
         self.config = config
-        presenter = ChatlogPresenter(users: partnerUsers, messagesAPI: MessagesAPI())
+        presenter = ChatlogPresenter(users: partnerUsers,
+                                     messagesAPI: MessagesAPI(),
+                                     usersAPI: UsersAPI())
         viewController = ChatLogViewController()
         viewController.input = presenter
         viewController.output = presenter

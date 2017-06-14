@@ -37,23 +37,58 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
     let currentMessages = Variable<[ChatMessageViewModel]>([])
     let shouldClose = PublishSubject<()>()
     
-    private let messagesAPI: MessagesAPI
+    private let messagesAPI: MessageAPIProtocol
+    private let usersAPI: UsersAPIProtocol
     private let disposeBag = DisposeBag()
     private let currentUID: String
     private let partnerUID: String
     
-    init(users: PartnerUsers, messagesAPI: MessagesAPI) {
+    init(users: PartnerUsers, messagesAPI: MessageAPIProtocol, usersAPI: UsersAPIProtocol) {
         currentUID = users.0
         partnerUID = users.1
         
         self.messagesAPI = messagesAPI
+        self.usersAPI = usersAPI
         
         viewDidLoad.subscribe { (event) in
             self.messagesAPI.observeMessages(ofUser: self.currentUID, withPartner: self.partnerUID, onReceive: { (message) in
-                self.currentMessages.value
-                    .append(ChatMessageViewModel(text: message.text,
-                                                 userImage: nil,
-                                                 type: message.fromID == self.currentUID ? .currentUser : .partnerUser))
+                let messageType: MessageCellType = message.fromID == self.currentUID ? .currentUser : .partnerUser
+                usersAPI.getUser(withID: message.fromID, onReceive: { result in
+                    switch result {
+                    case .success(let user):
+                        if let userImgUrlString = user.imgURL, let userImgUrl = URL(string: userImgUrlString) {
+                            ImageCache.shared.image(for: userImgUrl, completionHandler: { (result) in
+                                switch result {
+                                case .success(let image):
+                                    self.currentMessages.value
+                                        .append(ChatMessageViewModel(text: message.text,
+                                                                     userImage: image,
+                                                                     type: messageType))
+                                    break
+                                case .failure(_):
+                                    self.currentMessages.value
+                                        .append(ChatMessageViewModel(text: message.text,
+                                                                     userImage: nil,
+                                                                     type: messageType))
+                                    break
+                                }
+                            })
+                        }else{
+                            self.currentMessages.value
+                                .append(ChatMessageViewModel(text: message.text,
+                                                             userImage: nil,
+                                                             type: messageType))
+                        }
+                        break
+                    case .failure(_):
+                        self.currentMessages.value
+                            .append(ChatMessageViewModel(text: message.text,
+                                                         userImage: nil,
+                                                         type: messageType))
+                        break
+                    }
+                })
+                
             })
         }.addDisposableTo(disposeBag)
         

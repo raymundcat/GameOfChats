@@ -20,6 +20,8 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         collectionView.register(ChatMessageCell.self, forCellWithReuseIdentifier: self.cellID)
         collectionView.backgroundColor = .white
         collectionView.keyboardDismissMode = .interactive
+        collectionView.alwaysBounceVertical = true
+        collectionView.contentInset = UIEdgeInsetsMake(16, 0, 16, 0)
         collectionView.delegate = self
         collectionView.dataSource = self
         return collectionView

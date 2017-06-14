@@ -269,6 +269,7 @@
 		EC30E9EA1EAD3787005E2E81 /* Overalls */ = {
 			isa = PBXGroup;
 			children = (
+				EC785AA91EF1A53D002C7E28 /* APIs */,
 				ECDBCCC11EB6287300B17297 /* Helpers */,
 				EC741C751EB4B6F100B5D0B1 /* Entities */,
 			);
@@ -326,6 +327,15 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		EC785AA91EF1A53D002C7E28 /* APIs */ = {
+			isa = PBXGroup;
+			children = (
+				ECE99A701ECCD467004189DE /* UsersAPI.swift */,
+				ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */,
+			);
+			name = APIs;
+			sourceTree = "<group>";
+		};
 		ECBA09891EBA6C0400ACDAF1 /* ChatLogs */ = {
 			isa = PBXGroup;
 			children = (
@@ -368,7 +378,6 @@
 			children = (
 				ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */,
 				ECBA09AE1EC9FFBE00ACDAF1 /* ChatlogPresenter.swift */,
-				ECBA09AB1EC86D2900ACDAF1 /* MessagesAPI.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -388,7 +397,6 @@
 			children = (
 				ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */,
 				ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */,
-				ECE99A701ECCD467004189DE /* UsersAPI.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";

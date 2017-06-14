@@ -30,10 +30,10 @@ class NewMessageViewController: BaseViewController{
             guard let input = input else { return }
             rxViewDidLoad.bind(to: input.viewDidLoad)
                 .addDisposableTo(disposeBag)
-            tableView.rx.itemSelected.subscribe({ event in
-                guard let row = event.element?.row else { return }
-                input.didSelectUser.onNext(self.users[row].id)
-            }).addDisposableTo(disposeBag)
+            tableView.rx.itemSelected
+                .map{ self.users[$0.row].id }
+                .asObservable().bind(to: input.didSelectUser)
+                .addDisposableTo(disposeBag)
         }
     }
     
