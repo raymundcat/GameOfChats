@@ -16,6 +16,7 @@ enum MessagesError: Error{
 protocol MessageAPIProtocol {
     func observeLastMessages(ofUser uid: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
     func observeMessages(ofUser currentUID: String, withPartner partnerUID: String, onReceive: @escaping (_ message: ChatMessage) -> Void)
+    func send(message: ChatMessage)
 }
 
 class MessagesAPI: MessageAPIProtocol{

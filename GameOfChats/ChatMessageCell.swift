@@ -74,6 +74,7 @@ class ChatMessageCell: UICollectionViewCell {
             break
         case .partnerUser:
             imageView.isHidden = false
+            imageView.image = message.userImage
             bubbleView.backgroundColor = .lightGray
             textLabel.textColor = .black
             
