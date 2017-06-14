@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PromiseKit
 
 extension UIImageView{
     func loadCachedImage(fromURL url: URL, withPlaceHolder placeHolder: UIImage?) {
@@ -31,6 +32,22 @@ class ImageCache {
     static let shared = ImageCache()
     private let cache = NSCache<NSString, UIImage>()
     private init() { }
+    
+    func image(for url: URL) -> Promise<UIImage> {
+        return Promise { fulfill, reject in
+            image(for: url, completionHandler: { (result) in
+                switch result {
+                case .success(let image):
+                    fulfill(image)
+                    break
+                case .failure(let error):
+                    reject(error)
+                    break
+                }
+            })
+        }
+    }
+    
     func image(for url: URL, completionHandler: @escaping (_ result: Result<UIImage>) -> Void) {
         DispatchQueue.main.async {
             if let cachedImage = self.cache.object(forKey: url.absoluteString as NSString)  {

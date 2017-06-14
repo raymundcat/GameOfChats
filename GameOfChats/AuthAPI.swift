@@ -54,7 +54,7 @@ class AuthAPI: AuthAPIProtocol {
         return Promise{ fulfill, reject in
             loginUser(email: credential.email, password: credential.password).then{ uid -> Void in
                 fulfill(uid)
-                }.catch{ error in
+            }.catch{ error in
                 reject(error)
             }
         }
@@ -63,7 +63,7 @@ class AuthAPI: AuthAPIProtocol {
     func registerUser(form: RegistrationForm) -> Promise<String> {
         return Promise{ fulfill, reject in
             createUser(email: form.email, password: form.password).then{ uid -> Promise<(String, String)> in
-            return self.upload(forUID: uid, userProfileImage: form.profileImage).then{($0, uid)}
+                return self.upload(forUID: uid, userProfileImage: form.profileImage).then{($0, uid)}
             }.then{ (url, uid) -> Promise<String> in
                 let userProfile = UserProfile(name: form.name, email: form.email, password: form.password, profileImageURL: url)
                 return self.updateUserProfile(forUID: uid, withProfile: userProfile).then{ uid }

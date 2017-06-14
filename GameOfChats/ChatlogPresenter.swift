@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import PromiseKit
 
 struct ChatMessageViewModel {
     let text: String
@@ -53,42 +54,25 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
         viewDidLoad.subscribe { (event) in
             self.messagesAPI.observeMessages(ofUser: self.currentUID, withPartner: self.partnerUID, onReceive: { (message) in
                 let messageType: MessageCellType = message.fromID == self.currentUID ? .currentUser : .partnerUser
-                usersAPI.getUser(withID: message.fromID, onReceive: { result in
-                    switch result {
-                    case .success(let user):
-                        if let userImgUrlString = user.imgURL, let userImgUrl = URL(string: userImgUrlString) {
-                            ImageCache.shared.image(for: userImgUrl, completionHandler: { (result) in
-                                switch result {
-                                case .success(let image):
-                                    self.currentMessages.value
-                                        .append(ChatMessageViewModel(text: message.text,
-                                                                     userImage: image,
-                                                                     type: messageType))
-                                    break
-                                case .failure(_):
-                                    self.currentMessages.value
-                                        .append(ChatMessageViewModel(text: message.text,
-                                                                     userImage: nil,
-                                                                     type: messageType))
-                                    break
-                                }
-                            })
-                        }else{
-                            self.currentMessages.value
-                                .append(ChatMessageViewModel(text: message.text,
-                                                             userImage: nil,
-                                                             type: messageType))
-                        }
-                        break
-                    case .failure(_):
-                        self.currentMessages.value
-                            .append(ChatMessageViewModel(text: message.text,
-                                                         userImage: nil,
-                                                         type: messageType))
-                        break
-                    }
-                })
                 
+                usersAPI.getUser(withID: message.fromID)
+                .then(execute: { (user) -> Promise<UIImage> in
+                    guard let userImgUrlString = user.imgURL,
+                        let userImgUrl = URL(string: userImgUrlString) else {
+                        throw ImageCacheError.failedToDecodeImage
+                    }
+                    return ImageCache.shared.image(for: userImgUrl)
+                }).then(execute: { (image) -> Void in
+                    self.currentMessages.value
+                        .append(ChatMessageViewModel(text: message.text,
+                                                     userImage: image,
+                                                     type: messageType))
+                }).catch(execute: { (error) in
+                    self.currentMessages.value
+                        .append(ChatMessageViewModel(text: message.text,
+                                                     userImage: nil,
+                                                     type: messageType))
+                })
             })
         }.addDisposableTo(disposeBag)
         
@@ -104,6 +88,8 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
                 self.messagesAPI.send(message: message)
         }.addDisposableTo(disposeBag)
     }
+    
+    
 }
 
 

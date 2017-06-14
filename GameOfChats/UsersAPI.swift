@@ -10,20 +10,38 @@ import Foundation
 import FirebaseDatabase
 
 protocol UsersAPIProtocol {
+    func getUser(withID id: String) -> Promise<User>
     func getAllUsers(onreceive: @escaping (_ user: User) -> Void)
     func getUser(withID id: String, onReceive: @escaping (_ result: Result<User>) -> Void)
 }
 
 class UsersAPI: UsersAPIProtocol{
-    func getAllUsers(onreceive: @escaping (_ user: User) -> Void){
+    
+    func getAllUsers(onreceive: @escaping (_ user: User) -> Void) {
         FIRDatabase.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
             guard let dict = snapshot.value as? [String : AnyObject] else { return }
             guard let user = User.from(dict: dict, withID: snapshot.key) else { return }
+            UsersCache.shared.save(user: user)
             onreceive(user)
         })
     }
     
-    func getUser(withID id: String, onReceive: @escaping (_ result: Result<User>) -> Void){
+    func getUser(withID id: String) -> Promise<User> {
+        return Promise { fulfill, reject in
+            getUser(withID: id, onReceive: { (result) in
+                switch result {
+                case .success(let user):
+                    fulfill(user)
+                    break
+                case .failure(let error):
+                    reject(error)
+                    break
+                }
+            })
+        }
+    }
+    
+    func getUser(withID id: String, onReceive: @escaping (_ result: Result<User>) -> Void) {
         if let user = UsersCache.shared.user(withID: id) {
             onReceive(Result.success(result: user))
         }else{
