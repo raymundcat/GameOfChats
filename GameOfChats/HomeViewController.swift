@@ -58,7 +58,7 @@ class HomeViewController: BaseViewController {
         tableView.edgeAnchors == view.edgeAnchors
     }
     
-    fileprivate var messages: [ChatMessage] = [ChatMessage]()
+    fileprivate var messages: [UserMessageViewModel] = [UserMessageViewModel]()
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
