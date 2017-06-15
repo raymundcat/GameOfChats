@@ -73,7 +73,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as? UserMessageCell else { return UITableViewCell() }
-        cell.message = messages[indexPath.row]
+        cell.messageViewModel = messages[indexPath.row]
         return cell
     }
 }

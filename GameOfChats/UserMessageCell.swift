@@ -10,14 +10,14 @@ import UIKit
 
 class UserMessageCell: UITableViewCell{
     
-    var message: UserMessageViewModel?{
+    var messageViewModel: UserMessageViewModel?{
         didSet{
-            guard let message = message else { return }
-            subTitleLabel.text = message.message.text
+            guard let messageViewModel = messageViewModel else { return }
+            subTitleLabel.text = messageViewModel.message.text
             titleLabel.text = "..."
-            let time = Date(timeIntervalSince1970: TimeInterval(message.message.timestamp))
+            let time = Date(timeIntervalSince1970: TimeInterval(messageViewModel.message.timestamp))
             timeLabel.text = time.simpleTimeFormat()
-            self.user = message.user
+            self.user = messageViewModel.user
         }
     }
     
