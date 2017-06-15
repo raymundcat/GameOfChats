@@ -88,8 +88,6 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
                 self.messagesAPI.send(message: message)
         }.addDisposableTo(disposeBag)
     }
-    
-    
 }
 
 

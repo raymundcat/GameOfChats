@@ -11,27 +11,32 @@ import RxSwift
 
 protocol HomeInput {
     var viewDidLoad: PublishSubject<()> { get }
-    var openMessages: PublishSubject<ChatMessage> { get }
+    var openMessages: PublishSubject<UserMessageViewModel> { get }
     var openUsers: PublishSubject<()> { get }
     var logOut: PublishSubject<()> { get }
 }
 
 protocol HomeOutput {
-    var currentMessages: Variable<[ChatMessage]> { get }
+    var currentMessages: Variable<[UserMessageViewModel]> { get }
     var currentUser: Variable<User?> { get }
     var shouldOpenMessagesForUser: PublishSubject<String> { get }
     var shouldOpenUsers: PublishSubject<()> { get }
     var shouldLogOut: PublishSubject<()> { get }
 }
 
+struct UserMessageViewModel {
+    let message: ChatMessage
+    let user: User
+}
+
 class HomePresenter: HomeInput, HomeOutput{
     
     let viewDidLoad = PublishSubject<()>()
-    let openMessages = PublishSubject<ChatMessage>()
+    let openMessages = PublishSubject<UserMessageViewModel>()
     let openUsers = PublishSubject<()>()
     let logOut = PublishSubject<()>()
     
-    let currentMessages = Variable<[ChatMessage]>([])
+    let currentMessages = Variable<[UserMessageViewModel]>([])
     let currentUser = Variable<User?>(nil)
     let shouldOpenMessagesForUser = PublishSubject<String>()
     let shouldOpenUsers = PublishSubject<()>()
@@ -39,12 +44,16 @@ class HomePresenter: HomeInput, HomeOutput{
     
     private let authAPI : AuthAPIProtocol
     private let messagesAPI: MessageAPIProtocol
-    private var messagesDict = Variable<[String : ChatMessage]>([:])
+    private let usersAPI: UsersAPIProtocol
+    private var messagesDict = Variable<[String : UserMessageViewModel]>([:])
     private let disposeBag = DisposeBag()
     
-    init(authAPI : AuthAPIProtocol, messagesAPI: MessageAPIProtocol) {
+    init(authAPI : AuthAPIProtocol,
+         messagesAPI: MessageAPIProtocol,
+         usersAPI: UsersAPIProtocol) {
         self.authAPI = authAPI
         self.messagesAPI = messagesAPI
+        self.usersAPI = usersAPI
         
         viewDidLoad.subscribe { _ in
             self.handleViewDidLoad()
@@ -57,9 +66,7 @@ class HomePresenter: HomeInput, HomeOutput{
         openMessages
             .subscribe({ event in
             guard let message = event.element else { return }
-            guard let userID = self.currentUser.value?.id else { return }
-            guard let partnerID = message.getChatPartner(ofUser: userID) else { return }
-            self.shouldOpenMessagesForUser.onNext(partnerID)
+            self.shouldOpenMessagesForUser.onNext(message.user.id)
         }).addDisposableTo(disposeBag)
         
         openUsers.subscribe({ _ in
@@ -85,7 +92,12 @@ class HomePresenter: HomeInput, HomeOutput{
         messagesAPI.observeLastMessages(ofUser: uid, onReceive: { message in
             guard let currentUser = self.currentUser.value else { return }
             guard let partnerID = message.getChatPartner(ofUser: currentUser.id) else { return }
-            self.messagesDict.value[partnerID] = message
+            self.usersAPI.getUser(withID: partnerID)
+            .then(execute: { (user) -> Void in
+                self.messagesDict.value[partnerID] =  UserMessageViewModel(message: message, user: user)
+            }).catch(execute: { (error) in
+                //handle error
+            })
         })
     }
     

@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseDatabase
 
 class InitialFlowController: FlowController{
     
@@ -36,6 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         FIRApp.configure()
+        FIRDatabase.database().persistenceEnabled = true
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()

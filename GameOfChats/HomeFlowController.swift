@@ -27,7 +27,9 @@ class HomeFlowController: FlowController {
     
     init(config: FlowConfig) {
         self.config = config
-        presenter = HomePresenter(authAPI: AuthAPI(), messagesAPI: MessagesAPI())
+        presenter = HomePresenter(authAPI: AuthAPI(),
+                                  messagesAPI: MessagesAPI(),
+                                  usersAPI: UsersAPI())
         
         viewController = HomeViewController()
         viewController.homeInput = presenter
