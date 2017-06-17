@@ -7,8 +7,12 @@
 //
 
 import UIKit
+import Anchorage
+import RxSwift
 
 class LoginViewController: UIViewController {
+    
+    private let disposeBag = DisposeBag()
     
     let inputsContainerView: UIView = {
         let inputsContainerView = UIView()
@@ -93,7 +97,7 @@ class LoginViewController: UIViewController {
         sc.translatesAutoresizingMaskIntoConstraints = false
         sc.tintColor = .white
         sc.selectedSegmentIndex = 0
-        sc.addTarget(self, action: #selector(segmentControlValueChanged), for: .valueChanged)
+//        sc.addTarget(self, action: #selector(segmentControlValueChanged), for: .valueChanged)
         return sc
     }()
     
@@ -147,17 +151,64 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleViewTap)))
         view.backgroundColor = .heroBlue
+        view.addSubview(profileImageView)
         view.addSubview(inputsContainerView)
         view.addSubview(loginButton)
-        view.addSubview(profileImageView)
         view.addSubview(loginRegisterSegmentedControl)
+        inputsContainerView.addSubview(nameTextField)
+        inputsContainerView.addSubview(emailTextField)
+        inputsContainerView.addSubview(passwordTextField)
         
-        setUpInputsContainer()
-        setUpRegisterButton()
-        setupLogoImageView()
-        setupRegisterSegmentedControl()
+//        setUpInputsContainer()
+//        setUpRegisterButton()
+//        setupLogoImageView()
+//        setupRegisterSegmentedControl()
+//        segmentControlValueChanged()
         
-        segmentControlValueChanged()
+        profileImageView.centerXAnchor == view.centerXAnchor
+        profileImageView.bottomAnchor == loginRegisterSegmentedControl.topAnchor - 10
+        profileImageView.widthAnchor == 80
+        profileImageView.heightAnchor == 80
+        
+        loginRegisterSegmentedControl.centerXAnchor == view.centerXAnchor
+        loginRegisterSegmentedControl.bottomAnchor == inputsContainerView.topAnchor - 10
+        loginRegisterSegmentedControl.widthAnchor == view.widthAnchor * 0.8
+        loginRegisterSegmentedControl.heightAnchor == 30
+        
+        inputsContainerView.centerAnchors == view.centerAnchors
+        containerViewHeightAnchor = inputsContainerView.heightAnchor == 80
+        inputsContainerView.widthAnchor == view.widthAnchor * 0.8
+        
+        loginButton.centerXAnchor == view.centerXAnchor
+        loginButton.topAnchor == inputsContainerView.bottomAnchor + 10
+        loginButton.widthAnchor == view.widthAnchor * 0.8
+        
+        loginRegisterSegmentedControl.rx.controlEvent(UIControlEvents.valueChanged)
+        .subscribe { (event) in
+            let index = self.loginRegisterSegmentedControl.selectedSegmentIndex
+            self.loginButton.setTitle(index == 0 ? "LOGIN" : "REGISTER", for: .normal)
+            self.containerViewHeightAnchor?.constant = index == 0 ? 80 : 120
+            self.nameTextFieldHeightAnchor?.constant = index == 0 ? 0 : 40
+            self.nameTextField.isHidden = index == 0
+            UIView.animate(withDuration: 0.3, animations: {
+                self.view.layoutIfNeeded()
+            })
+        }.addDisposableTo(disposeBag)
+        
+        nameTextField.centerXAnchor == inputsContainerView.centerXAnchor
+        nameTextField.topAnchor == inputsContainerView.topAnchor
+        nameTextFieldHeightAnchor = nameTextField.heightAnchor == 40
+        nameTextField.widthAnchor == inputsContainerView.widthAnchor * 0.9
+        
+        emailTextField.centerXAnchor == inputsContainerView.centerXAnchor
+        emailTextField.topAnchor == nameTextField.bottomAnchor
+        emailTextField.heightAnchor == 40
+        emailTextField.widthAnchor == inputsContainerView.widthAnchor * 0.9
+        
+        passwordTextField.centerXAnchor == inputsContainerView.centerXAnchor
+        passwordTextField.topAnchor == emailTextField.bottomAnchor
+        passwordTextField.heightAnchor == 40
+        passwordTextField.widthAnchor == inputsContainerView.widthAnchor * 0.9
     }
     
     func handleViewTap(){

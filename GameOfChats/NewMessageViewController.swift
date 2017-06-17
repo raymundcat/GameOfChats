@@ -27,8 +27,10 @@ class NewMessageViewController: BaseViewController{
     var input: NewMessageInput? {
         didSet {
             guard let input = input else { return }
+            
             rxViewDidLoad.bind(to: input.viewDidLoad)
                 .addDisposableTo(disposeBag)
+            
             tableView.rx.itemSelected
                 .map{ self.users[$0.row].id }
                 .asObservable().bind(to: input.didSelectUser)
