@@ -157,22 +157,22 @@ class LoginViewController: UIViewController {
         nameTextField.isHidden = true
         
         nameSeparatorView.centerXAnchor == inputsContainerView.centerXAnchor
-        nameSeparatorView.topAnchor == inputsContainerView.topAnchor
+        nameSeparatorView.topAnchor == nameTextField.bottomAnchor
         nameSeparatorView.heightAnchor == 0.5
         nameSeparatorView.widthAnchor == inputsContainerView.widthAnchor
         
         emailTextField.centerXAnchor == inputsContainerView.centerXAnchor
-        emailTextField.topAnchor == nameTextField.bottomAnchor
+        emailTextField.topAnchor == nameSeparatorView.bottomAnchor
         emailTextField.heightAnchor == 40
         emailTextField.widthAnchor == inputsContainerView.widthAnchor * 0.9
         
         emailsSeparatorView.centerXAnchor == inputsContainerView.centerXAnchor
-        emailsSeparatorView.topAnchor == inputsContainerView.topAnchor
+        emailsSeparatorView.topAnchor == emailTextField.bottomAnchor
         emailsSeparatorView.heightAnchor == 0.5
         emailsSeparatorView.widthAnchor == inputsContainerView.widthAnchor
         
         passwordTextField.centerXAnchor == inputsContainerView.centerXAnchor
-        passwordTextField.topAnchor == emailTextField.bottomAnchor
+        passwordTextField.topAnchor == emailsSeparatorView.bottomAnchor
         passwordTextField.heightAnchor == 40
         passwordTextField.widthAnchor == inputsContainerView.widthAnchor * 0.9
         
@@ -194,6 +194,7 @@ class LoginViewController: UIViewController {
         containerViewHeightAnchor?.constant = index == 0 ? 80 : 120
         nameTextFieldHeightAnchor?.constant = index == 0 ? 0 : 40
         nameTextField.isHidden = index == 0
+        nameSeparatorView.isHidden = index == 0
         UIView.animate(withDuration: 0.25, animations: {
             self.view.layoutIfNeeded()
         })
