@@ -27,21 +27,21 @@ class LoginFlowController: FlowController, LoginFlowOutput{
         presenter = LoginPresenter(authAPI: AuthAPI())
         viewController = LoginViewController()
         viewController.loginInput = presenter
-    }
-    
-    func start() {
+        
         presenter.loginResult.subscribe { (event) in
             guard let uid = event.element else { return }
             self.loginResult.onNext(uid)
             self.config.navigationController?.dismiss(animated: true, completion: nil)
-        }.addDisposableTo(disposeBag)
+            }.addDisposableTo(disposeBag)
         
         presenter.registerResult.subscribe { (event) in
             guard let uid = event.element else { return }
             self.loginResult.onNext(uid)
             self.config.navigationController?.dismiss(animated: true, completion: nil)
-        }.addDisposableTo(disposeBag)
-        
+            }.addDisposableTo(disposeBag)
+    }
+    
+    func start() {
         config.navigationController?.present(viewController, animated: true, completion: nil)
     }
 }
