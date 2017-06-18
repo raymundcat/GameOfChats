@@ -72,6 +72,7 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
             inputTextField.rx.text.asObservable()
                 .bind(to: input.messageText)
                 .addDisposableTo(disposeBag)
+            
             inputTextField.rx.controlEvent(UIControlEvents.editingDidEnd)
                 .asObservable()
                 .bind(to: input.sendMessage)
