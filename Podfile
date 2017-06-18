@@ -15,6 +15,7 @@ target 'GameOfChats' do
   pod 'MBProgressHUD', '~> 1.0.0'
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'IGListKit', '~> 3.0'
   
   target 'GameOfChatsTests' do
     inherit! :search_paths

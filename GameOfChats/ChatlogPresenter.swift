@@ -11,6 +11,7 @@ import RxSwift
 import PromiseKit
 
 struct ChatMessageViewModel {
+    let id: String
     let text: String
     let userImage: UIImage?
     let type: MessageCellType
@@ -56,38 +57,39 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
                 let messageType: MessageCellType = message.fromID == self.currentUID ? .currentUser : .partnerUser
                 
                 usersAPI.getUser(withID: message.fromID)
-                .then(execute: { (user) -> Promise<UIImage> in
-                    guard let userImgUrlString = user.imgURL,
-                        let userImgUrl = URL(string: userImgUrlString) else {
-                        throw ImageCacheError.failedToDecodeImage
-                    }
-                    return ImageCache.shared.image(for: userImgUrl)
-                }).then(execute: { (image) -> Void in
-                    self.currentMessages.value
-                        .append(ChatMessageViewModel(text: message.text,
-                                                     userImage: image,
-                                                     type: messageType))
-                }).catch(execute: { (error) in
-                    self.currentMessages.value
-                        .append(ChatMessageViewModel(text: message.text,
-                                                     userImage: nil,
-                                                     type: messageType))
-                })
+                    .then(execute: { (user) -> Promise<UIImage> in
+                        guard let userImgUrlString = user.imgURL,
+                            let userImgUrl = URL(string: userImgUrlString) else {
+                                throw ImageCacheError.failedToDecodeImage
+                        }
+                        return ImageCache.shared.image(for: userImgUrl)
+                    }).then(execute: { (image) -> Void in
+                        self.currentMessages.value
+                            .append(ChatMessageViewModel(id: message.id,
+                                                         text: message.text,
+                                                         userImage: image,
+                                                         type: messageType))
+                    }).catch(execute: { (error) in
+                        self.currentMessages.value
+                            .append(ChatMessageViewModel(id: message.id,
+                                                         text: message.text,
+                                                         userImage: nil,
+                                                         type: messageType))
+                    })
             })
-        }.addDisposableTo(disposeBag)
+            }.addDisposableTo(disposeBag)
         
         sendMessage
             .throttle(0.5, scheduler: MainScheduler.instance)
             .subscribe { (event) in
                 guard let messageText = self.messageText.value else { return }
                 let timestamp = Int(NSDate().timeIntervalSince1970)
-                let message = ChatMessage(text: messageText,
-                                      toID: self.partnerUID,
-                                      fromID: self.currentUID,
-                                      timestamp: timestamp)
+                let message = ChatMessage(id: "",
+                                          text: messageText,
+                                          toID: self.partnerUID,
+                                          fromID: self.currentUID,
+                                          timestamp: timestamp)
                 self.messagesAPI.send(message: message)
-        }.addDisposableTo(disposeBag)
+            }.addDisposableTo(disposeBag)
     }
 }
-
-

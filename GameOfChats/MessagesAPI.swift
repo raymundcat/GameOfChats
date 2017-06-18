@@ -29,7 +29,7 @@ class MessagesAPI: MessageAPIProtocol{
             userMessagesRef.child(uid).child(snapshot.key).queryLimited(toLast: 1).observe(.childAdded, with: { (snapshot) in
                 messagesRef.child(snapshot.key).observeSingleEvent(of: .value, with: { (snapshot) in
                     guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                    guard let message = ChatMessage.from(dict: dict) else { return }
+                    guard let message = ChatMessage.from(dict: dict, withKey: snapshot.key) else { return }
                     onReceive(message)
                 }, withCancel: nil)
             }, withCancel: nil)
@@ -45,7 +45,7 @@ class MessagesAPI: MessageAPIProtocol{
         userMessagesRef.child(currentUID).child(partnerUID).observe(.childAdded, with: { (snapshot) in
             messagesRef.child(snapshot.key).observe(.value, with: { (snapshot) in
                 guard let dict = snapshot.value as? [String : AnyObject] else { return }
-                guard let message = ChatMessage.from(dict: dict) else { return }
+                guard let message = ChatMessage.from(dict: dict, withKey: snapshot.key) else { return }
                 onReceive(message)
             }, withCancel: nil)
         }, withCancel: nil)

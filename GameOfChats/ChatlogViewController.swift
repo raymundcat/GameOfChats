@@ -10,7 +10,7 @@ import UIKit
 import Anchorage
 import RxSwift
 import RxCocoa
-
+import IGListKit
 
 class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLayout{
     
@@ -57,6 +57,8 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         return view
     }()
     
+    var messages = [ChatMessageViewModel]()
+    
     private let disposeBag = DisposeBag()
     var input: ChatlogInput?{
         didSet{
@@ -94,27 +96,20 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCollectionView()
-        setupInputComponents()
-    }
-    
-    var messages = [ChatMessageViewModel]()
-    
-    func setupCollectionView(){
+        
         view.addSubview(collectionView)
         collectionView.edgeAnchors == view.edgeAnchors
-        keyboardHeight()
-            .observeOn(MainScheduler.instance)
-            .subscribe { (event) in
-                guard let keyboardHeight = event.element else { return }
-                self.collectionView.contentInset = UIEdgeInsetsMake(65, 0, keyboardHeight + 8, 0)
-                self.view.layoutIfNeeded()
-            }.addDisposableTo(disposeBag)
-    }
-    
-    func setupInputComponents(){
-        containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
         
+        keyboardHeight().observeOn(MainScheduler.instance)
+        .subscribe { (event) in
+            guard let keyboardHeight = event.element else { return }
+            var inset = UIEdgeInsetsMake(16, 0, 16, 0)
+            inset.bottom = inset.bottom + keyboardHeight
+            self.collectionView.contentInset = inset
+            self.view.layoutIfNeeded()
+        }.addDisposableTo(disposeBag)
+        
+        containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
         containerView.addSubview(sendButton)
         containerView.addSubview(inputTextField)
         
@@ -198,17 +193,14 @@ extension ChatLogViewController: UITextFieldDelegate{
     }
 }
 
-func keyboardHeight() -> Observable<CGFloat> {
-    return Observable
-        .from([
-            NotificationCenter.default.rx.notification(NSNotification.Name.UIKeyboardWillShow)
-                .map { notification -> CGFloat in
-                    (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.height ?? 0
-            },
-            NotificationCenter.default.rx.notification(NSNotification.Name.UIKeyboardWillHide)
-                .map { _ -> CGFloat in
-                    0
-            }
-            ])
-        .merge()
+//MARK: IGDiffable
+
+extension ChatMessageViewModel: Equatable {
+    static public func ==(lhs: ChatMessageViewModel, rhs: ChatMessageViewModel) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
+
+
+
+//extension ChatMessageViewModel: 
