@@ -22,7 +22,7 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
         collectionView.contentInset = UIEdgeInsetsMake(66, 0, 16, 0)
-        
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
     
@@ -92,12 +92,18 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         didSet{
             output?.currentMessages.asObservable()
                 .throttle(1, scheduler: MainScheduler.instance)
-                .subscribe({ (event) in
+                .subscribe({ [weak self] (event) in
+                    guard let `self` = self else { return }
                     guard let messages = event.element else { return }
                     self.messages = messages.sorted(by: { (message1, message2) -> Bool in
                         return message1.timestamp < message2.timestamp
                     })
-                    self.adapter.performUpdates(animated: true, completion: nil)
+                    self.adapter.performUpdates(animated: true, completion: { (completed) in
+                        if let last = self.messages.last {
+                            self.adapter.scroll(to: last, supplementaryKinds: nil, scrollDirection: .vertical, scrollPosition: .centeredVertically, animated: true)
+                        }
+                    })
+                    
             }).addDisposableTo(disposeBag)
         }
     }
