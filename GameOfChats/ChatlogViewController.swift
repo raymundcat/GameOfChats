@@ -22,8 +22,6 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
         collectionView.contentInset = UIEdgeInsetsMake(66, 0, 16, 0)
-//        collectionView.delegate = self
-//        collectionView.dataSource = self
         
         return collectionView
     }()
@@ -162,39 +160,10 @@ extension ChatLogViewController{
 
 //MARK: CollectionView Delegates
 
-extension ChatLogViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return messages.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ChatMessageCell
-        let message = messages[indexPath.row]
-        cell.layoutCell(withMessage: message)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let text = messages[indexPath.row].text
-        let width = UIScreen.main.bounds.width
-        let height = estimateHeight(ofText: text, forMaxWidth: 200).height + 30
-        return CGSize(width: width, height: height)
-    }
-    
-    private func estimateHeight(ofText text: String, forMaxWidth maxWidth: CGFloat) -> CGRect{
-        let maxSize = CGSize(width: maxWidth, height: 2000)
-        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        return NSString(string: text).boundingRect(with: maxSize, options: options, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 16)], context: nil)
-    }
-    
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        collectionView.collectionViewLayout.invalidateLayout()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        view.endEditing(true)
-    }
+func estimateHeight(ofText text: String, forMaxWidth maxWidth: CGFloat) -> CGRect{
+    let maxSize = CGSize(width: maxWidth, height: 2000)
+    let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+    return NSString(string: text).boundingRect(with: maxSize, options: options, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 16)], context: nil)
 }
 
 //MARK: Textfield Delegates
@@ -237,7 +206,6 @@ extension ChatLogViewController: ListAdapterDataSource {
     
     func emptyView(for listAdapter: ListAdapter) -> UIView? {
         let emptyView = UIView()
-        emptyView.backgroundColor = .gray
         return emptyView
     }
 }
@@ -251,11 +219,16 @@ class ChatLogSectionController: ListSectionController {
     }
     
     override func sizeForItem(at index: Int) -> CGSize {
-        return CGSize(width: self.viewController?.view.frame.width ?? 80, height: 80)
+        let screenWidth = UIScreen.main.bounds.width
+        let estimateRect = estimateHeight(ofText: message?.text ?? "", forMaxWidth: 100)
+        let size = CGSize(width: screenWidth, height: estimateRect.height)
+        print(size, estimateRect)
+        return size
     }
     
     override func cellForItem(at index: Int) -> UICollectionViewCell {
-        guard let message = message, let cell = collectionContext?.dequeueReusableCell(of: ChatMessageCell.self, for: self, at: index) as? ChatMessageCell else { return ChatMessageCell() }
+        guard let message = message,
+            let cell = collectionContext?.dequeueReusableCell(of: ChatMessageCell.self, for: self, at: index) as? ChatMessageCell else { return ChatMessageCell() }
         cell.layoutCell(withMessage: message)
         return cell
     }

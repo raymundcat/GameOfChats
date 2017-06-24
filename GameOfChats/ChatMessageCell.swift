@@ -37,7 +37,7 @@ class ChatMessageCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubview(bubbleView)
         addSubview(imageView)
-        bubbleView.addSubview(textLabel)
+        addSubview(textLabel)
         
         imageView.leftAnchor == self.leftAnchor + 8
         imageView.widthAnchor == 30
