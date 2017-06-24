@@ -94,8 +94,9 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
                 .throttle(1, scheduler: MainScheduler.instance)
                 .subscribe({ (event) in
                     guard let messages = event.element else { return }
-                    self.messages = messages
-                    self.collectionView.reloadData()
+                    self.messages = messages.sorted(by: { (message1, message2) -> Bool in
+                        return message1.timestamp < message2.timestamp
+                    })
                     self.adapter.performUpdates(animated: true, completion: nil)
             }).addDisposableTo(disposeBag)
         }
@@ -220,8 +221,8 @@ class ChatLogSectionController: ListSectionController {
     
     override func sizeForItem(at index: Int) -> CGSize {
         let screenWidth = UIScreen.main.bounds.width
-        let estimateRect = estimateHeight(ofText: message?.text ?? "", forMaxWidth: 110)
-        let size = CGSize(width: screenWidth, height: estimateRect.height + 20)
+        let estimateRect = estimateHeight(ofText: message?.text ?? "", forMaxWidth: 220)
+        let size = CGSize(width: screenWidth, height: estimateRect.height + 25)
         print(size, estimateRect)
         return size
     }

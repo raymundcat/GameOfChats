@@ -15,15 +15,18 @@ class ChatMessageViewModel {
     let text: String
     let userImage: UIImage?
     let type: MessageCellType
+    let timestamp: Int
     
     init(id: String,
          text: String,
          userImage: UIImage?,
-         type: MessageCellType) {
+         type: MessageCellType,
+         timestamp: Int) {
         self.id = id
         self.text = text
         self.userImage = userImage
         self.type = type
+        self.timestamp = timestamp
     }
 }
 
@@ -78,13 +81,15 @@ class ChatlogPresenter: ChatlogInput, ChatlogOutput{
                             .append(ChatMessageViewModel(id: message.id,
                                                          text: message.text,
                                                          userImage: image,
-                                                         type: messageType))
+                                                         type: messageType,
+                                                         timestamp: message.timestamp))
                     }).catch(execute: { (error) in
                         self.currentMessages.value
                             .append(ChatMessageViewModel(id: message.id,
                                                          text: message.text,
                                                          userImage: nil,
-                                                         type: messageType))
+                                                         type: messageType,
+                                                         timestamp: message.timestamp))
                     })
             })
             }.addDisposableTo(disposeBag)
