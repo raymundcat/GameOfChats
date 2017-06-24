@@ -220,8 +220,8 @@ class ChatLogSectionController: ListSectionController {
     
     override func sizeForItem(at index: Int) -> CGSize {
         let screenWidth = UIScreen.main.bounds.width
-        let estimateRect = estimateHeight(ofText: message?.text ?? "", forMaxWidth: 100)
-        let size = CGSize(width: screenWidth, height: estimateRect.height)
+        let estimateRect = estimateHeight(ofText: message?.text ?? "", forMaxWidth: 110)
+        let size = CGSize(width: screenWidth, height: estimateRect.height + 20)
         print(size, estimateRect)
         return size
     }
