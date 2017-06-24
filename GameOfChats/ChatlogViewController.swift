@@ -21,10 +21,18 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         collectionView.backgroundColor = .white
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
-        collectionView.contentInset = UIEdgeInsetsMake(16, 0, 16, 0)
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        collectionView.contentInset = UIEdgeInsetsMake(66, 0, 16, 0)
+//        collectionView.delegate = self
+//        collectionView.dataSource = self
+        
         return collectionView
+    }()
+    
+    lazy var adapter: ListAdapter = {
+        let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: self, workingRangeSize: 0)
+        adapter.collectionView = self.collectionView
+        adapter.dataSource = self
+        return adapter
     }()
     
     lazy var containerView: UIView = {
@@ -90,6 +98,7 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
                     guard let messages = event.element else { return }
                     self.messages = messages
                     self.collectionView.reloadData()
+                    self.adapter.performUpdates(animated: true, completion: nil)
             }).addDisposableTo(disposeBag)
         }
     }
@@ -103,10 +112,13 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
         keyboardHeight().observeOn(MainScheduler.instance)
         .subscribe { (event) in
             guard let keyboardHeight = event.element else { return }
-            var inset = UIEdgeInsetsMake(16, 0, 16, 0)
+            var inset = UIEdgeInsetsMake(74, 0, 16, 0)
             inset.bottom = inset.bottom + keyboardHeight
             self.collectionView.contentInset = inset
-            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                guard let `self` = self else { return }
+                self.view.layoutIfNeeded()
+            })
         }.addDisposableTo(disposeBag)
         
         containerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
@@ -201,6 +213,55 @@ extension ChatMessageViewModel: Equatable {
     }
 }
 
+extension ChatMessageViewModel: ListDiffable {
+    
+    func diffIdentifier() -> NSObjectProtocol {
+        return NSString(string: id);
+    }
+    
+    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let messageObject = object as? ChatMessageViewModel else { return false }
+        return id == messageObject.id
+    }
+}
 
+extension ChatLogViewController: ListAdapterDataSource {
+    
+    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
+        return messages
+    }
+    
+    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
+        return ChatLogSectionController()
+    }
+    
+    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+        let emptyView = UIView()
+        emptyView.backgroundColor = .gray
+        return emptyView
+    }
+}
 
-//extension ChatMessageViewModel: 
+class ChatLogSectionController: ListSectionController {
+    
+    var message: ChatMessageViewModel?
+
+    override func numberOfItems() -> Int {
+        return 1
+    }
+    
+    override func sizeForItem(at index: Int) -> CGSize {
+        return CGSize(width: self.viewController?.view.frame.width ?? 80, height: 80)
+    }
+    
+    override func cellForItem(at index: Int) -> UICollectionViewCell {
+        guard let message = message, let cell = collectionContext?.dequeueReusableCell(of: ChatMessageCell.self, for: self, at: index) as? ChatMessageCell else { return ChatMessageCell() }
+        cell.layoutCell(withMessage: message)
+        return cell
+    }
+    
+    override func didUpdate(to object: Any) {
+        guard let messageObject = object as? ChatMessageViewModel else { return }
+        message = messageObject
+    }
+}

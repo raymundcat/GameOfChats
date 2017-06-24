@@ -10,11 +10,21 @@ import Foundation
 import RxSwift
 import PromiseKit
 
-struct ChatMessageViewModel {
+class ChatMessageViewModel {
     let id: String
     let text: String
     let userImage: UIImage?
     let type: MessageCellType
+    
+    init(id: String,
+         text: String,
+         userImage: UIImage?,
+         type: MessageCellType) {
+        self.id = id
+        self.text = text
+        self.userImage = userImage
+        self.type = type
+    }
 }
 
 protocol ChatlogInput {
