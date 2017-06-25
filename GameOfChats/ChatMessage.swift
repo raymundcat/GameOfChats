@@ -9,17 +9,20 @@
 import Foundation
 
 struct ChatMessage {
+    
+    let id: String
     let text: String
     let toID: String
     let fromID: String
     let timestamp: Int
     
-    static func from(dict: [String : AnyObject]) -> ChatMessage?{
+    static func from(dict: [String : AnyObject], withKey key: String) -> ChatMessage?{
         guard let text = dict["text"] as? String else { return nil }
         guard let toID = dict["toID"] as? String else { return nil }
         guard let fromID = dict["fromID"] as? String else { return nil }
         guard let timestamp = dict["timestamp"] as? Int else { return nil }
-        return ChatMessage(text: text,
+        return ChatMessage(id: key,
+                           text: text,
                            toID: toID,
                            fromID: fromID,
                            timestamp: timestamp)

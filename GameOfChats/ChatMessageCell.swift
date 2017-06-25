@@ -16,6 +16,7 @@ class ChatMessageCell: UICollectionViewCell {
         label.textColor = .white
         label.textAlignment = .left
         label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 16)
         return label
     }()
     
@@ -37,7 +38,7 @@ class ChatMessageCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubview(bubbleView)
         addSubview(imageView)
-        bubbleView.addSubview(textLabel)
+        addSubview(textLabel)
         
         imageView.leftAnchor == self.leftAnchor + 8
         imageView.widthAnchor == 30

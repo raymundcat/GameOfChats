@@ -42,6 +42,7 @@
 		ECBA09B11EC9FFD900ACDAF1 /* ChatlogFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA09B01EC9FFD900ACDAF1 /* ChatlogFlowController.swift */; };
 		ECDBCCC31EB6288D00B17297 /* UIImageView+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */; };
 		ECDBCCC51EB7507000B17297 /* ChatlogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */; };
+		ECDDF4C11EF6946200E01094 /* Keyboard+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDDF4C01EF6946200E01094 /* Keyboard+Helper.swift */; };
 		ECE99A6A1ECCA6BB004189DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A691ECCA6BB004189DE /* BaseViewController.swift */; };
 		ECE99A6D1ECCD0A0004189DE /* NewMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */; };
 		ECE99A6F1ECCD0B8004189DE /* NewMessageFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */; };
@@ -115,6 +116,7 @@
 		ECDBCCBE1EB5F15800B17297 /* GameOfChats-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GameOfChats-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Cache.swift"; sourceTree = "<group>"; };
 		ECDBCCC41EB7507000B17297 /* ChatlogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatlogViewController.swift; sourceTree = "<group>"; };
+		ECDDF4C01EF6946200E01094 /* Keyboard+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Keyboard+Helper.swift"; sourceTree = "<group>"; };
 		ECE99A691ECCA6BB004189DE /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		ECE99A6C1ECCD0A0004189DE /* NewMessagePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessagePresenter.swift; sourceTree = "<group>"; };
 		ECE99A6E1ECCD0B8004189DE /* NewMessageFlowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageFlowController.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				EC30E9EC1EAD37A4005E2E81 /* UIColor+Extensions.swift */,
 				ECDBCCC21EB6288D00B17297 /* UIImageView+Cache.swift */,
 				ECBA098B1EBBADAE00ACDAF1 /* Date+Formatters.swift */,
+				ECDDF4C01EF6946200E01094 /* Keyboard+Helper.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -699,6 +702,7 @@
 				EC30E9F11EAD38E4005E2E81 /* HomeViewController.swift in Sources */,
 				EC30E9E91EAD372E005E2E81 /* LoginViewController.swift in Sources */,
 				ECBA09A01EC735FB00ACDAF1 /* Result.swift in Sources */,
+				ECDDF4C11EF6946200E01094 /* Keyboard+Helper.swift in Sources */,
 				ECBA09821EB7C5FC00ACDAF1 /* Errors.swift in Sources */,
 				ECBA09B11EC9FFD900ACDAF1 /* ChatlogFlowController.swift in Sources */,
 				EC30E9ED1EAD37A4005E2E81 /* UIColor+Extensions.swift in Sources */,

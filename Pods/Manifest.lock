@@ -40,6 +40,11 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
   - GTMSessionFetcher/Core (1.1.9)
+  - IGListKit (3.0.0):
+    - IGListKit/Default (= 3.0.0)
+  - IGListKit/Default (3.0.0):
+    - IGListKit/Diffing
+  - IGListKit/Diffing (3.0.0)
   - MBProgressHUD (1.0.0)
   - PromiseKit (4.1.7):
     - PromiseKit/Foundation (= 4.1.7)
@@ -62,6 +67,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Database
   - Firebase/Storage
+  - IGListKit (~> 3.0)
   - MBProgressHUD (~> 1.0.0)
   - PromiseKit (~> 4.0)
   - RxCocoa
@@ -78,11 +84,12 @@ SPEC CHECKSUMS:
   FirebaseStorage: a5c55b23741a49a72af8f30f95b3bb5ddbeda12d
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
+  IGListKit: 9eab6856a15fa25ad72018ff9d9eb2178c240fff
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   PromiseKit: 779f2e41faf62d854e7593026ddbcb0bb5c5002d
   RxCocoa: d14ef6b6029e1ddc6e966508c09289090de68ff9
   RxSwift: 3789a1af753002a14edecdb698a2424624296a9c
 
-PODFILE CHECKSUM: 14b535d92fe0f32425fe7bdf8eeb3237c0e3a487
+PODFILE CHECKSUM: ceab471a054e02d16ece5775e09b00e435002825
 
 COCOAPODS: 1.2.0
