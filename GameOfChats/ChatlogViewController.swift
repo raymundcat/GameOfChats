@@ -99,11 +99,13 @@ class ChatLogViewController: BaseViewController, UICollectionViewDelegateFlowLay
                         return message1.timestamp < message2.timestamp
                     })
                     self.adapter.performUpdates(animated: true, completion: { (completed) in
-                        if let last = self.messages.last {
-                            self.adapter.scroll(to: last, supplementaryKinds: nil, scrollDirection: .vertical, scrollPosition: .centeredVertically, animated: true)
+                        if messages.last != nil {
+                            let lastSection = max(0, self.collectionView.numberOfSections - 1)
+                            let lastRow = max(0, self.collectionView.numberOfItems(inSection: lastSection) - 1)
+                            self.collectionView.scrollToItem(at: IndexPath(row: lastRow, section: lastSection),
+                                                             at: .bottom, animated: true)
                         }
                     })
-                    
             }).addDisposableTo(disposeBag)
         }
     }
